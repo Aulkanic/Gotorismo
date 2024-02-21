@@ -2,10 +2,9 @@
 import './App.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { RouterUrl } from './routes';
-import { LandingPage } from './pages/public/landingPage';
-import { Public } from './layout';
+import { LandingPage,Signup,Login, AdminDashboard, Accounts, AdminTalk, TravelAdventure, TravelBooking, TravelMaps, TravelPlan, AdminProfile, TravelProfile, TravelDashboard, TravelTalk, BusinessBooking, MyBusiness, BusinessProfile, BusinessDashboard, BusinessTalk } from './pages';
+import { Private, Public } from './layout';
 import { Error } from './pages/error/error';
-import { Signup } from './pages/public/Signup/signup';
 function App() {
   const router = createBrowserRouter([
     {
@@ -20,7 +19,33 @@ function App() {
         {
           path: RouterUrl.SIGNUPPAGE,
           element:<Signup />
+        },
+        {
+          path: RouterUrl.LOGIN,
+          element:<Login />
         }
+      ]
+    },
+    {
+      path:RouterUrl.LANDINGPAGE,
+      element : <Private />,
+      children:[
+        {path:RouterUrl.ADMINSIDE,element:<AdminDashboard/>},
+        {path:RouterUrl.ADMINACCOUNTS,element:<Accounts/>},
+        {path:RouterUrl.ADMINPROFILE,element:<AdminProfile/>},
+        {path:RouterUrl.ADMINTRAVELTALK,element:<AdminTalk/>},
+        {path:RouterUrl.TRAVELLERADVENTURE,element:<TravelAdventure/>},
+        {path:RouterUrl.TRAVELLERBOOKING,element:<TravelBooking/>},
+        {path:RouterUrl.TRAVELLERMAPS,element:<TravelMaps/>},
+        {path:RouterUrl.TRAVELLERPLAN,element:<TravelPlan/>},
+        {path:RouterUrl.TRAVELLERPROFILE,element:<TravelProfile/>},
+        {path:RouterUrl.TRAVELLERSIDE,element:<TravelDashboard/>},
+        {path:RouterUrl.TRAVELLERTALK,element:<TravelTalk/>},
+        {path:RouterUrl.BUSINESSBOOKING,element:<BusinessBooking/>},
+        {path:RouterUrl.BUSINESSMINE,element:<MyBusiness/>},
+        {path:RouterUrl.BUSINESSPROFILE,element:<BusinessProfile/>},
+        {path:RouterUrl.BUSINESSSIDE,element:<BusinessDashboard/>},
+        {path:RouterUrl.BUSINESSTALK,element:<BusinessTalk/>},
       ]
     }
   ])

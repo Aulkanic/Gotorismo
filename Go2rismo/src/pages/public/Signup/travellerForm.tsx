@@ -53,6 +53,7 @@ export const TravelFrm = () => {
             <Form.Item<FieldType>
             label="First Name"
             name="firstName"
+            className='mb-2'
             rules={[{ required: true, message: 'Please input your username!' }]}
             >
             <Input />
@@ -60,6 +61,7 @@ export const TravelFrm = () => {
             <Form.Item<FieldType>
             label="Last Name"
             name="lastName"
+            className='mb-2'
             rules={[{ required: true, message: 'Please input your username!' }]}
             >
             <Input />
@@ -67,6 +69,7 @@ export const TravelFrm = () => {
             <Form.Item<FieldType>
             label="Birthdate:"
             name="birthDate"
+            className='mb-2'
             rules={[{ required: true, message: 'Please input your username!' }]}
             >
             <DatePicker className='w-full' />
@@ -74,6 +77,7 @@ export const TravelFrm = () => {
             <Form.Item<FieldType>
             label="Address"
             name="address"
+            className='mb-2'
             rules={[{ required: true, message: 'Please input your password!' }]}
             >
             <Input />
@@ -83,12 +87,14 @@ export const TravelFrm = () => {
             <Form.Item<FieldType>
                 name="phoneNumber"
                 label="Phone Number"
+                 className='mb-2'
                 >
             <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
             </Form.Item>
             <Form.Item<FieldType>
                 name="validId"
                 label="Valid Id:"
+                className='mb-2'
                 >
             <CustomUpload
             />
@@ -96,6 +102,7 @@ export const TravelFrm = () => {
             <Form.Item
                 name="email"
                 label="E-mail"
+                className='mb-2'
                 rules={[
                 {
                     type: 'email',

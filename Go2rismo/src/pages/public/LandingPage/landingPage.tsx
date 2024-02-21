@@ -1,6 +1,6 @@
-import React from 'react'
-import { CustomButton } from '../../components/Button/CustomButton'
-import Logo from '../../assets/app logo.png';
+
+import { CustomButton } from '../../../components/Button/CustomButton'
+import Logo from '../../../assets/app logo.png';
 
 export const LandingPage = () => {
   return (
@@ -8,7 +8,7 @@ export const LandingPage = () => {
     <div className='flex items-center'>
       <img className='w-96'
       src={Logo} alt="" />
-      <div className='flex flex-col'>
+      <div className='flex flex-col ml-8'>
         <p className='text-[#00256E] font-bold text-[55px] m-0'>A travel buddy for everybody</p>
         <p className='text-[#00256E] font-bold text-[45px] ml-40'>Book . Plan . Explore</p>
         <div className='flex gap-12 ml-40'>
