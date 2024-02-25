@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { TravelFrm } from './travellerForm'
 import { BusinessFrm } from './businessForm'
 import Logo from '../../../assets/app logo.png'

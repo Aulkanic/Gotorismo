@@ -1,8 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {  Form, Input,DatePicker,Select, Checkbox } from 'antd';
-import { CustomUpload } from '../../../components/Upload/CustomUpload';
+import {  Form, Input,DatePicker,Select, Checkbox,Upload, notification,Button } from 'antd';
 import { CustomButton } from '../../../components/Button/CustomButton';
 import Logo from '../../../assets/app logo.png'
+import { UploadOutlined } from '@ant-design/icons';
+import { uploadImageToStorage } from '../../../config/uploadFile';
+import { addData } from '../../../hooks/useAddData';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -13,42 +17,92 @@ const prefixSelector = (
       </Select>
     </Form.Item>
   );
-
 type FieldType = {
     firstName?: string;
     lastName?: string;
     birthDate?: string;
     address?: string;
     phoneNumber?: string;
-    validId?: string;
+    validId?: any;
     email?: string;
     password?: string;
   };
 
 export const TravelFrm = () => {
-    const onFinish = (values: any) => {
-    console.log('Success:', values);
+    const [form] = Form.useForm();
+    const navigate = useNavigate()
+    const [api, contextHolder] = notification.useNotification();
+    const [loading,setLoading] = useState(false)
+    const onFinish = async(values: any) => {
+        try {
+            setLoading(true)
+            const validIdFiles = values.validId;
+            const uploading = validIdFiles.map(async (file:any) => {
+                const filePath = `documents/${file.name}`;
+                const upload = await uploadImageToStorage(file.originFileObj,filePath)
+                return upload
+            })
+            const imageUrl = await Promise.all(uploading)
+            const dataToSend = {
+                address:values.address,
+                birthDate: values.birthDate.toISOString(),
+                email:values.email,
+                firstName:values.firstName,
+                lastName:values.lastName,
+                password:values.password,
+                phoneNumber: values.phoneNumber,
+                validId: imageUrl[0]
+            }
+            await addData('tbl_traveller',dataToSend);
+            api.success({
+                message: 'Form Submission',
+                description: 'Form submitted successfully!',
+            });
+            setLoading(false)
+            form.resetFields();
+            setTimeout(() =>{
+                navigate('/Login')
+            },2000)
+        } catch (error) {
+            console.log(error)
+            api.error({
+                message:'Form Submission',
+                description: 'Failed to submit form. Please try again later.',
+            })
+            setLoading(false)
+        }
     };
     
     const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
     };
+    const normFile = (e: any) => {
+        if (Array.isArray(e)) {
+            console.log(e)
+          return e;
+        }
+        console.log(e?.fileList)
+        return e?.fileList;
+      };
+    
+
   return (
     <div className='w-full flex justify-center items-center relative'>  
     <img className='w-40 h-max absolute left-12 -top-24' src={Logo} alt="logo" />
     <Form
-        name="basic"
-        layout='vertical'
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        style={{ width:'60%',marginLeft:'70px' }}
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-        autoComplete="off"
+    form={form}
+    name="basic"
+    layout='vertical'
+    labelCol={{ span: 8 }}
+    wrapperCol={{ span: 20 }}
+    style={{ width:'60%',marginLeft:'70px' }}
+    initialValues={{ remember: true }}
+    onFinish={onFinish}
+    onFinishFailed={onFinishFailed}
+    autoComplete="off"
     >
         <h3 className='text-[#00256E] font-bold text-3xl mb-4'>Sign up as Traveller</h3>
-        <div className='flex gap-4 w-full flex-wrap'>
+        <div className='flex gap-2 w-full flex-wrap'>
             <div className='flex-1'>
             <Form.Item<FieldType>
             label="First Name"
@@ -91,13 +145,10 @@ export const TravelFrm = () => {
                 >
             <Input addonBefore={prefixSelector} style={{ width: '100%' }} />
             </Form.Item>
-            <Form.Item<FieldType>
-                name="validId"
-                label="Valid Id:"
-                className='mb-2'
-                >
-            <CustomUpload
-            />
+            <Form.Item label="Valid ID" name='validId' valuePropName="fileList" getValueFromEvent={normFile}>
+            <Upload action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188" listType="picture" maxCount={1}>
+            <Button className='w-full bg-white' icon={<UploadOutlined />}>Upload here</Button>
+            </Upload>
             </Form.Item>
             <Form.Item
                 name="email"
@@ -149,10 +200,13 @@ export const TravelFrm = () => {
         <CustomButton
             children={'Submit'}
             type='primary'
+            htmlType='submit'
+            loading={loading}
             classes='w-32 rounded-xl'
           />
         </Form.Item>
     </Form>
+    {contextHolder}
   </div>
   )
 }

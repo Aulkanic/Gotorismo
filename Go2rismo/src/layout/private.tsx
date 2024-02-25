@@ -4,12 +4,15 @@ import { RouterUrl } from '../routes';
 import clsx from 'clsx';
 import Logo from '../../src/assets/app logo.png'
 import { Link, Outlet } from 'react-router-dom';
+import useStore from '../zustand/store/store';
+import { selector } from '../zustand/store/store.provide';
 
 export default function Private(){
   const typeUser:string = 'admi';
+  const user = useStore(selector('user'))
   const [selected,setSelected] = useState(0)
-
-  const links = typeUser === 'traveller' ?
+  console.log(user)
+  const links = user.userType === 'traveller' ?
   [
     {id:0,name:'Home',url:RouterUrl.TRAVELLERSIDE},
     {id:1,name:'Booking',url:RouterUrl.TRAVELLERBOOKING},

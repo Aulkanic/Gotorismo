@@ -1,21 +1,73 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react'
+import React, { useState } from 'react'
 import Logo from '../../../assets/app logo.png'
 import { Link, useNavigate } from 'react-router-dom'
-import { Button, Form, Input } from 'antd';
+import { Form, Input,Select, notification } from 'antd';
+import { fetchData } from '../../../hooks/useFetchData';
+import { CustomButton } from '../../../components/Button/CustomButton';
+import { saveAdminInfo, saveBusinessInfo, saveTravellerInfo, setUserType } from '../../../zustand/store/store.provide';
 
 type FieldType = {
   email?: string;
   password?: string;
   remember?: string;
+  type?:string;
 };
 
 
 export const Login = () => {
-  const navigate = useNavigate()
-  const onFinish = (values: any) => {
-    navigate('/UserDashBoard/HomePage')
-    console.log('Success:', values);
+  const navigate = useNavigate();
+  const [loading,setLoading] = useState(false)
+  const onFinish = async(values: any) => {
+      setLoading(true)
+      try {
+          const data = await fetchData(values.type)
+          data?.shift()
+          const isExist = data?.find((item:any) => item.email === values.email && item.password === values.password);
+          if (isExist) {
+            setLoading(false)
+            notification.success({
+              message: 'Login Successfully',
+            });
+            switch (values.type){
+              case 'tbl_traveller':
+                setUserType('traveller')
+                saveTravellerInfo(isExist)
+                setTimeout(() =>{
+                  navigate('/UserDashBoard/HomePage');
+                },2000)
+                break;
+              case 'tbl_business':
+                setUserType('business')
+                saveBusinessInfo(isExist)
+                setTimeout(() =>{
+                  navigate('/BusinessDashBoard');
+                },2000)
+                break;
+              case 'tbl_admin':
+                setUserType('admin')
+                saveAdminInfo(isExist)    
+                setTimeout(() =>{
+                  navigate('/AdminDashboard/Home');
+                },2000)
+                break;
+              default:
+                break            
+            }
+          } else {
+            setLoading(false)
+            notification.error({
+              message: 'Login Failed',
+              description: 'Invalid username or password. Please try again.',
+            });
+          }
+      } catch (error) {
+        notification.error({
+            message:'Form Submission',
+            description: 'Failed to submit form. Please try again later.',
+        })
+        setLoading(false)
+      }
   };
   
   const onFinishFailed = (errorInfo: any) => {
@@ -46,7 +98,7 @@ export const Login = () => {
           <Form.Item<FieldType>
             label="Email"
             name="email"
-            className='mb-0 w-full'
+            className='mb-2 w-full'
             rules={[{ required: true, message: 'Please input your username!' }]}
           >
             <Input />
@@ -55,16 +107,32 @@ export const Login = () => {
           <Form.Item<FieldType>
             label="Password"
             name="password"
-            className='mb-4 w-full'
+            className='mb-2 w-full'
             rules={[{ required: true, message: 'Please input your password!' }]}
           >
             <Input.Password />
           </Form.Item>
-
+          <Form.Item<FieldType> 
+          label="Select Type"
+          name='type'
+          className='w-full'
+          rules={[{ required: true, message: 'Please select your usertype first!' }]}
+          >
+          <Select>
+            <Select.Option value="">-select type-</Select.Option>
+            <Select.Option value="tbl_admin">Admin</Select.Option>
+            <Select.Option value="tbl_traveller">Traveller</Select.Option>
+            <Select.Option value="tbl_business">Business</Select.Option>
+          </Select>
+        </Form.Item>
           <Form.Item wrapperCol={{ offset: 20, span: 24 }} className='w-full'>
-            <Button type="primary" className='bg-blue-600 hover:bg-blue-900 rounded-xl' htmlType="submit">
-              Login
-            </Button>
+          <CustomButton
+            children={'Login'}
+            type='primary'
+            htmlType='submit'
+            loading={loading}
+            classes='rounded-xl'
+          />
           </Form.Item>
         </Form>
       </div>

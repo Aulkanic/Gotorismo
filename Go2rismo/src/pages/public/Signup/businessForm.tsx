@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react'
-import {  Form, Input,DatePicker,Select, Checkbox } from 'antd';
-import { CustomUpload } from '../../../components/Upload/CustomUpload';
+import {  Form, Input,DatePicker,Select, Checkbox,Upload, notification, Button } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 import { CustomButton } from '../../../components/Button/CustomButton';
+import { uploadImageToStorage } from '../../../config/uploadFile';
 import Logo from '../../../assets/app logo.png'
+import { addData } from '../../../hooks/useAddData';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -20,33 +23,92 @@ type FieldType = {
     lastName?: string;
     birthDate?: string;
     address?: string;
+    businessName?:string;
+    location?:string;
+    businessType?:string;
     phoneNumber?: string;
     validId?: string;
+    businessPermit?:string;
     email?: string;
     password?: string;
   };
 
 export const BusinessFrm = () => {
-    const onFinish = (values: any) => {
-        console.log('Success:', values);
-        };
-        
-        const onFinishFailed = (errorInfo: any) => {
-        console.log('Failed:', errorInfo);
-        };
+    const [form] = Form.useForm();
+    const navigate = useNavigate()
+    const [api, contextHolder] = notification.useNotification();
+    const [loading,setLoading] = useState(false)
+    const onFinish = async(values: any) => {
+        try {
+            setLoading(true)
+            const validIdFiles = values.validId;
+            const businessPermitFile = values.businessPermit;
+            const uploadingValidFile = validIdFiles.map(async (file:any) => {
+                const filePath = `documents/${file.name}`;
+                const upload = await uploadImageToStorage(file.originFileObj,filePath)
+                return upload
+            })
+            const uploadingBusinessPermit = businessPermitFile.map(async (file:any) => {
+                const filePath = `documents/${file.name}`;
+                const upload = await uploadImageToStorage(file.originFileObj,filePath)
+                return upload
+            })
+            const [validIdUrls,businessPermitUrls] = await Promise.all([Promise.all(uploadingValidFile),Promise.all(uploadingBusinessPermit)])
+            const dataToSend = {
+                address:values.address,
+                birthDate: values.birthDate.toISOString(),
+                businessName:values.businessName,
+                location:values.location,
+                businessType:values.businessType,
+                email:values.email,
+                firstName:values.firstName,
+                lastName:values.lastName,
+                password:values.password,
+                phoneNumber: values.phoneNumber,
+                validId: validIdUrls[0],
+                businessPermit:businessPermitUrls[0],
+
+            }
+            await addData('tbl_business',dataToSend);
+            api.success({
+                message: 'Form Submission',
+                description: 'Form submitted successfully!',
+            });
+            setLoading(false)
+            form.resetFields();
+            setTimeout(() =>{
+                navigate('/Login')
+            },2000)
+        } catch (error) {
+            console.log(error)
+            api.error({
+                message:'Form Submission',
+                description: 'Failed to submit form. Please try again later.',
+            })
+            setLoading(false)
+        }
+    };
+    const normFile = (e: any) => {
+    if (Array.isArray(e)) {
+        console.log(e)
+        return e;
+    }
+    console.log(e?.fileList)
+    return e?.fileList;
+    };
       return (
         <div className='w-full flex justify-center items-center relative'>  
         <img className='w-40 h-max absolute left-12 -top-24' src={Logo} alt="logo" />
         <Form
-            name="basic"
-            layout='vertical'
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 20 }}
-            style={{ width:'60%',marginLeft:'70px' }}
-            initialValues={{ remember: true }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
-            autoComplete="off"
+        form={form}
+        name="basic"
+        layout='vertical'
+        labelCol={{ span: 8 }}
+        wrapperCol={{ span: 20 }}
+        style={{ width:'60%',marginLeft:'70px' }}
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        autoComplete="off"
         >
             <h3 className='text-[#00256E] font-bold text-3xl mb-4'>Sign up as Business</h3>
             <div className='flex gap-4 w-full flex-wrap'>
@@ -55,7 +117,7 @@ export const BusinessFrm = () => {
                 label="First Name"
                 name="firstName"
                 className='mb-0'
-                rules={[{ required: true, message: 'Please input your username!' }]}
+                rules={[{ required: true, message: 'Please input your firstname!' }]}
                 >
                 <Input />
                 </Form.Item>
@@ -63,7 +125,7 @@ export const BusinessFrm = () => {
                 label="Last Name"
                 name="lastName"
                 className='mb-0'
-                rules={[{ required: true, message: 'Please input your username!' }]}
+                rules={[{ required: true, message: 'Please input your lastname!' }]}
                 >
                 <Input />
                 </Form.Item>
@@ -71,7 +133,7 @@ export const BusinessFrm = () => {
                 label="Birthdate:"
                 name="birthDate"
                 className='mb-0'
-                rules={[{ required: true, message: 'Please input your username!' }]}
+                rules={[{ required: true, message: 'Please input your birthday!' }]}
                 >
                 <DatePicker className='w-full' />
                 </Form.Item>
@@ -85,7 +147,7 @@ export const BusinessFrm = () => {
                 </Form.Item>
                 <Form.Item<FieldType>
                 label="Business Name"
-                name="address"
+                name="businessName"
                 className='mb-0'
                 rules={[{ required: true, message: 'Please input your password!' }]}
                 >
@@ -93,37 +155,31 @@ export const BusinessFrm = () => {
                 </Form.Item>
                 <Form.Item<FieldType>
                 label="Location"
-                name="address"
+                name="location"
                 className='mb-0'
-                rules={[{ required: true, message: 'Please input your password!' }]}
+                rules={[{ required: true, message: 'Please input your Business Location!' }]}
                 >
                 <Input />
                 </Form.Item>
                 <Form.Item<FieldType>
                 label="Type of Business"
-                name="address"
+                name="businessType"
                 className='mb-0'
-                rules={[{ required: true, message: 'Please input your password!' }]}
+                rules={[{ required: true, message: 'Please input Type of your Business!' }]}
                 >
                 <Input />
                 </Form.Item>
                 </div>
                 <div className='flex-1'>
-                <Form.Item<FieldType>
-                name="validId"
-                label="Business Permit"
-                className='mb-0'
-                >
-                <CustomUpload
-                />
+                <Form.Item label="Business Permit" name='businessPermit' valuePropName="fileList" getValueFromEvent={normFile}>
+                <Upload action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188" listType="picture" maxCount={1}>
+                <Button className='w-full bg-white' icon={<UploadOutlined />}>Upload here</Button>
+                </Upload>
                 </Form.Item>
-                <Form.Item<FieldType>
-                name="validId"
-                label="Valid ID"
-                className='mb-0'
-                >
-                <CustomUpload
-                />
+                <Form.Item label="Valid ID" name='validId' valuePropName="fileList" getValueFromEvent={normFile}>
+                <Upload action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188" listType="picture" maxCount={1}>
+                <Button className='w-full bg-white' icon={<UploadOutlined />}>Upload here</Button>
+                </Upload>
                 </Form.Item>
                 <Form.Item<FieldType>
                 name="phoneNumber"
@@ -181,12 +237,15 @@ export const BusinessFrm = () => {
             </div>
             <Form.Item wrapperCol={{ offset: 8, span: 16 }} className='flex justify-end items-end mr-44'>
             <CustomButton
-                children={'Submit'}
-                type='primary'
-                classes='w-32 rounded-xl'
+            loading={loading}
+            children={'Submit'}
+            htmlType='submit'
+            type='primary'
+            classes='w-32 rounded-xl'
               />
             </Form.Item>
         </Form>
+        {contextHolder}
       </div>
       )
 }
