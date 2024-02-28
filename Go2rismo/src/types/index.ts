@@ -28,3 +28,8 @@ export interface T_Traveller{
     phoneNumber: string;
     validID: string;
 }
+
+export interface T_Accounts {
+    traveller: { id: string }[];
+    business: { id: string }[];
+}

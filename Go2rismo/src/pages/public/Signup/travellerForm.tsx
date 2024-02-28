@@ -5,8 +5,11 @@ import Logo from '../../../assets/app logo.png'
 import { UploadOutlined } from '@ant-design/icons';
 import { uploadImageToStorage } from '../../../config/uploadFile';
 import { addData } from '../../../hooks/useAddData';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchData } from '../../../hooks/useFetchData';
+import { allUser, selector } from '../../../zustand/store/store.provide';
+import useStore from '../../../zustand/store/store';
 
 const { Option } = Select;
 
@@ -30,14 +33,31 @@ type FieldType = {
 
 export const TravelFrm = () => {
     const [form] = Form.useForm();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const userList = useStore(selector('user'))
     const [api, contextHolder] = notification.useNotification();
     const [loading,setLoading] = useState(false)
     const onFinish = async(values: any) => {
         try {
-            setLoading(true)
+            
             const validIdFiles = values.validId;
-            const uploading = validIdFiles.map(async (file:any) => {
+            if(!Array.isArray(validIdFiles)){
+                api.error({
+                    message:'Form Submission',
+                    description: 'Failed to submit form. Please input all necessary details.',
+                })
+                return
+            }
+            const isEmailUser = userList?.allUser.find((item: { email: any; }) => item.email === values.email);
+            if(isEmailUser){
+                api.error({
+                    message:'Email already used',
+                    description: 'Failed to submit form. Please use other email.',
+                })
+                return
+            }
+            setLoading(true)
+            const uploading = validIdFiles?.map(async (file:any) => {
                 const filePath = `documents/${file.name}`;
                 const upload = await uploadImageToStorage(file.originFileObj,filePath)
                 return upload
@@ -51,7 +71,8 @@ export const TravelFrm = () => {
                 lastName:values.lastName,
                 password:values.password,
                 phoneNumber: values.phoneNumber,
-                validId: imageUrl[0]
+                validId: imageUrl[0],
+                userType:'traveller'
             }
             await addData('tbl_traveller',dataToSend);
             api.success({
@@ -85,7 +106,17 @@ export const TravelFrm = () => {
         return e?.fileList;
       };
     
-
+    async function FetchUsers(){
+    const traveller = await fetchData('tbl_traveller')
+    const business = await fetchData('tbl_business')
+    const admin = await fetchData('tbl_admin')
+    const all = [...traveller,...business,...admin]
+    allUser(all)
+    }
+    useEffect(() =>{
+    FetchUsers()
+    },[])
+    
   return (
     <div className='w-full flex justify-center items-center relative'>  
     <img className='w-40 h-max absolute left-12 -top-24' src={Logo} alt="logo" />

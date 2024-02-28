@@ -1,50 +1,49 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Logo from '../../../assets/app logo.png'
 import { Link, useNavigate } from 'react-router-dom'
-import { Form, Input,Select, notification } from 'antd';
+import { Form, Input,notification } from 'antd';
 import { fetchData } from '../../../hooks/useFetchData';
 import { CustomButton } from '../../../components/Button/CustomButton';
-import { saveAdminInfo, saveBusinessInfo, saveTravellerInfo, setUserType } from '../../../zustand/store/store.provide';
+import { allUser, saveAdminInfo, saveBusinessInfo, saveTravellerInfo, selector, setUserType } from '../../../zustand/store/store.provide';
+import useStore from '../../../zustand/store/store';
 
 type FieldType = {
   email?: string;
   password?: string;
   remember?: string;
-  type?:string;
 };
 
 
 export const Login = () => {
   const navigate = useNavigate();
+  const userList = useStore(selector('user'))
   const [loading,setLoading] = useState(false)
   const onFinish = async(values: any) => {
       setLoading(true)
       try {
-          const data = await fetchData(values.type)
-          data?.shift()
-          const isExist = data?.find((item:any) => item.email === values.email && item.password === values.password);
+          const isExist = userList.allUser?.find((item:any) => item.email === values.email && item.password === values.password);
           if (isExist) {
             setLoading(false)
             notification.success({
               message: 'Login Successfully',
             });
-            switch (values.type){
-              case 'tbl_traveller':
+            switch (isExist.userType){
+              case 'traveller':
                 setUserType('traveller')
                 saveTravellerInfo(isExist)
                 setTimeout(() =>{
                   navigate('/UserDashBoard/HomePage');
                 },2000)
                 break;
-              case 'tbl_business':
+              case 'business':
                 setUserType('business')
                 saveBusinessInfo(isExist)
                 setTimeout(() =>{
                   navigate('/BusinessDashBoard');
                 },2000)
                 break;
-              case 'tbl_admin':
+              case 'admin':
                 setUserType('admin')
                 saveAdminInfo(isExist)    
                 setTimeout(() =>{
@@ -74,6 +73,18 @@ export const Login = () => {
     console.log('Failed:', errorInfo);
     
   };
+
+  async function FetchUsers(){
+    const traveller = await fetchData('tbl_traveller')
+    const business = await fetchData('tbl_business')
+    const admin = await fetchData('tbl_admin')
+    const all = [...traveller,...business,...admin]
+    allUser(all)
+  }
+  useEffect(() =>{
+    FetchUsers()
+  },[])
+  console.log(userList)
   return (
     <div className='h-screen w-full bg-gradient-to-b from-white via-green-400 to-cyan-500 flex justify-center relative items-center pt-24'>
       <div className='absolute top-0 right-0 flex flex-nowrap p-4 text-lg tracking-widest'> 
@@ -112,19 +123,6 @@ export const Login = () => {
           >
             <Input.Password />
           </Form.Item>
-          <Form.Item<FieldType> 
-          label="Select Type"
-          name='type'
-          className='w-full'
-          rules={[{ required: true, message: 'Please select your usertype first!' }]}
-          >
-          <Select>
-            <Select.Option value="">-select type-</Select.Option>
-            <Select.Option value="tbl_admin">Admin</Select.Option>
-            <Select.Option value="tbl_traveller">Traveller</Select.Option>
-            <Select.Option value="tbl_business">Business</Select.Option>
-          </Select>
-        </Form.Item>
           <Form.Item wrapperCol={{ offset: 20, span: 24 }} className='w-full'>
           <CustomButton
             children={'Login'}

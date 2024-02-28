@@ -3,19 +3,22 @@
 import { type StateCreator } from "zustand/vanilla";
 
 interface UserState {
-    userType: 'admin' | 'traveller' | 'business' | '';
+    userType?: 'admin' | 'traveller' | 'business' | '';
     isLogin:boolean;
+    allUser?:any;
     responseMsg:string;
 }
 export interface UserSlice{
     user: UserState | null;
     setUserType: (userType: 'admin' | 'traveller' | 'business') => void;
-    removeUserType: () => void
+    removeUserType: () => void;
+    allUser:(payload:any) => void;
 }
 
 const initialState: UserState ={
     userType:'',
     isLogin:false,
+    allUser:[],
     responseMsg:""
 }
 const createUserSlice: StateCreator<UserSlice> = (set) =>({
@@ -60,6 +63,17 @@ const createUserSlice: StateCreator<UserSlice> = (set) =>({
           } catch (error) {
             console.error('Logout error:', error);
           }
+    },
+    allUser:async(payload:any) =>{
+      set((state) => ({
+        ...state,
+        user: {
+          ...state.user,
+          allUser:payload,
+          isLogin:false,
+          responseMsg: '',
+        },
+      }));
     }
 })
 

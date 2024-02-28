@@ -10,7 +10,8 @@ export const{
     logoutBusiness,
     logoutTraveller,
     setUserType,
-    removeUserType
+    removeUserType,
+    allUser
 } = storeProvider
 
 export { selector, storeProvider };

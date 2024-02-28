@@ -2,7 +2,7 @@
 import './App.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { RouterUrl } from './routes';
-import { LandingPage,Signup,Login, AdminDashboard, Accounts, AdminTalk, TravelAdventure, TravelBooking, TravelMaps, TravelPlan, AdminProfile, TravelProfile, TravelDashboard, TravelTalk, BusinessBooking, MyBusiness, BusinessProfile, BusinessDashboard, BusinessTalk } from './pages';
+import { LandingPage,Signup,Login, AdminDashboard, Accounts, AdminTalk, TravelAdventure, TravelBooking, TravelMaps, TravelPlan, AdminProfile, TravelProfile, TravelDashboard, TravelTalk, BusinessBooking, MyBusiness, BusinessProfile, BusinessDashboard, BusinessTalk, AdminBooking } from './pages';
 import { Private, Public } from './layout';
 import { Error } from './pages/error/error';
 function App() {
@@ -34,6 +34,7 @@ function App() {
         {path:RouterUrl.ADMINACCOUNTS,element:<Accounts/>},
         {path:RouterUrl.ADMINPROFILE,element:<AdminProfile/>},
         {path:RouterUrl.ADMINTRAVELTALK,element:<AdminTalk/>},
+        {path:RouterUrl.ADMINBOOKING,element:<AdminBooking/>},
         {path:RouterUrl.TRAVELLERADVENTURE,element:<TravelAdventure/>},
         {path:RouterUrl.TRAVELLERBOOKING,element:<TravelBooking/>},
         {path:RouterUrl.TRAVELLERMAPS,element:<TravelMaps/>},

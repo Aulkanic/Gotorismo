@@ -16,7 +16,6 @@ export default function Private(){
     {id:0,name:'Home',url:RouterUrl.TRAVELLERSIDE},
     {id:1,name:'Booking',url:RouterUrl.TRAVELLERBOOKING},
     {id:2,name:'My Plan',url:RouterUrl.TRAVELLERPLAN},
-    {id:3,name:'Travel Talk',url:RouterUrl.TRAVELLERTALK},
     {id:4,name:'Adventure',url:RouterUrl.TRAVELLERADVENTURE},
     {id:5,name:'Maps',url:RouterUrl.TRAVELLERMAPS},
     {id:6,name:'Profile',url:RouterUrl.TRAVELLERPROFILE},
@@ -25,13 +24,11 @@ export default function Private(){
     {id:0,name:'Home',url:RouterUrl.ADMINSIDE},
     {id:1,name:'Booking',url:RouterUrl.ADMINBOOKING},
     {id:2,name:'Accounts',url:RouterUrl.ADMINACCOUNTS},
-    {id:3,name:'Travel Talk',url:RouterUrl.ADMINTRAVELTALK},
     {id:4,name:'Admin',url:RouterUrl.ADMINPROFILE},
   ] : [
     {id:0,name:'Home',url:RouterUrl.BUSINESSSIDE},
     {id:1,name:'Booking',url:RouterUrl.BUSINESSBOOKING},
     {id:2,name:'My Business',url:RouterUrl.BUSINESSMINE},
-    {id:3,name:'Travel Talk',url:RouterUrl.BUSINESSTALK},
     {id:4,name:'Profile',url:RouterUrl.BUSINESSPROFILE},
   ]
 

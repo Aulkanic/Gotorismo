@@ -5,8 +5,11 @@ import { CustomButton } from '../../../components/Button/CustomButton';
 import { uploadImageToStorage } from '../../../config/uploadFile';
 import Logo from '../../../assets/app logo.png'
 import { addData } from '../../../hooks/useAddData';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchData } from '../../../hooks/useFetchData';
+import { allUser, selector } from '../../../zustand/store/store.provide';
+import useStore from '../../../zustand/store/store';
 
 const { Option } = Select;
 
@@ -36,10 +39,20 @@ type FieldType = {
 export const BusinessFrm = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate()
+    const userList = useStore(selector('user'))
     const [api, contextHolder] = notification.useNotification();
     const [loading,setLoading] = useState(false)
     const onFinish = async(values: any) => {
         try {
+            console.log(values)
+            const isEmailUser = userList?.allUser.find((item: { email: any; }) => item.email === values.email);
+            if(isEmailUser){
+                api.error({
+                    message:'Email already used',
+                    description: 'Failed to submit form. Please use other email.',
+                })
+                return
+            }
             setLoading(true)
             const validIdFiles = values.validId;
             const businessPermitFile = values.businessPermit;
@@ -67,6 +80,7 @@ export const BusinessFrm = () => {
                 phoneNumber: values.phoneNumber,
                 validId: validIdUrls[0],
                 businessPermit:businessPermitUrls[0],
+                userType:'business'
 
             }
             await addData('tbl_business',dataToSend);
@@ -96,6 +110,17 @@ export const BusinessFrm = () => {
     console.log(e?.fileList)
     return e?.fileList;
     };
+
+    async function FetchUsers(){
+        const traveller = await fetchData('tbl_traveller')
+        const business = await fetchData('tbl_business')
+        const admin = await fetchData('tbl_admin')
+        const all = [...traveller,...business,...admin]
+        allUser(all)
+      }
+      useEffect(() =>{
+        FetchUsers()
+      },[])
       return (
         <div className='w-full flex justify-center items-center relative'>  
         <img className='w-40 h-max absolute left-12 -top-24' src={Logo} alt="logo" />
@@ -149,7 +174,7 @@ export const BusinessFrm = () => {
                 label="Business Name"
                 name="businessName"
                 className='mb-0'
-                rules={[{ required: true, message: 'Please input your password!' }]}
+                rules={[{ required: true, message: 'Please input your Business Name!' }]}
                 >
                 <Input />
                 </Form.Item>
@@ -161,13 +186,21 @@ export const BusinessFrm = () => {
                 >
                 <Input />
                 </Form.Item>
-                <Form.Item<FieldType>
-                label="Type of Business"
-                name="businessType"
-                className='mb-0'
-                rules={[{ required: true, message: 'Please input Type of your Business!' }]}
+                <Form.Item<FieldType> 
+                label="Select Type"
+                name='businessType'
+                className='w-full mt-2'
+                rules={[{ required: true, message: 'Please select your business type first!' }]}
                 >
-                <Input />
+                <Select 
+                mode="multiple"
+                allowClear
+                >
+                    <Select.Option value="">-select business-</Select.Option>
+                    <Select.Option value="Resort">Resort</Select.Option>
+                    <Select.Option value="Hotel & Rooms">Hotel & Rooms</Select.Option>
+                    <Select.Option value="Restaurant">Restaurant</Select.Option>
+                </Select>
                 </Form.Item>
                 </div>
                 <div className='flex-1'>

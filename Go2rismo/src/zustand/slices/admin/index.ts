@@ -12,7 +12,7 @@ interface AdminState {
 export interface AdminSlice{
     admin: AdminState | null;
     saveAdminInfo:(payload:any) => void;
-    logoutAdmin: () => void
+    logoutAdmin: () => void;
 }
 
 const initialState: AdminState ={
@@ -61,7 +61,8 @@ const createAdminSlice: StateCreator<AdminSlice> = (set) =>({
           } catch (error) {
             console.error('Logout error:', error);
           }
-    }
+    },
+
 })
 
 export default createAdminSlice
