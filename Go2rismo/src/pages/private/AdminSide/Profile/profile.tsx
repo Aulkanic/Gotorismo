@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import CustomCard from '../../../../components/card'
 import { GrUserAdmin } from "react-icons/gr";
 import { MdOutlineTravelExplore } from "react-icons/md";
@@ -8,8 +8,24 @@ import { FaUmbrellaBeach } from "react-icons/fa6";
 import { FaHotel } from "react-icons/fa6";
 import { IoFastFood } from "react-icons/io5";
 import { Avatar } from 'antd';
+import useStore from '../../../../zustand/store/store';
+import { saveAllUser, selector } from '../../../../zustand/store/store.provide';
+import { fetchData } from '../../../../hooks/useFetchData';
 
 export const AdminProfile = () => {
+  const admin = useStore(selector('admin'))
+
+  async function Fetch(){
+    const traveller = await fetchData('tbl_traveller')
+    const business = await fetchData('tbl_business')
+    const admin = await fetchData('tbl_admin')
+    const all = [...traveller,...business,...admin]
+    saveAllUser(all)
+  }
+  useEffect(() =>{
+    Fetch()
+  },[])
+  console.log(admin)
   return (
     <div className='w-full flex gap-4 flex-wrap'>
       <div className='w-[650px] flex flex-col justify-top items-center p-4'>
@@ -33,7 +49,7 @@ export const AdminProfile = () => {
             content={
               <div className='flex items-center justify-between'>
               <GrUserAdmin size={24}/>
-              <p>1</p>
+              <p>{admin.allUser?.Admin?.length}</p>
               </div>
             }
             addedClass=''
@@ -43,7 +59,7 @@ export const AdminProfile = () => {
             content={
               <div className='flex items-center justify-between'>
               <MdOutlineTravelExplore size={24}/>
-              <p>1</p>
+              <p>{admin.allUser?.Traveller?.length}</p>
               </div>
             }
           />
@@ -52,12 +68,11 @@ export const AdminProfile = () => {
             content={
               <div className='flex items-center justify-between'>
               <FcBusinessman size={24}/>
-              <p>1</p>
+              <p>{admin.allUser?.Business?.length}</p>
               </div>
             }
           />
           </div>
-
         </div>
         <div>
           <h1 className='text-4xl text-[#00256E] mb-4'>Total Products:</h1>
@@ -67,17 +82,17 @@ export const AdminProfile = () => {
             content={
               <div className='flex items-center justify-between'>
               <MdTour size={24}/>
-              <p>1</p>
+              <p>{admin.businessType?.touristSpots?.length}</p>
               </div>
             }
             addedClass=''
           />
           <CustomCard
-            title='Beach and Resorts'
+            title='Beach Resorts'
             content={
               <div className='flex items-center justify-between'>
               <FaUmbrellaBeach size={24}/>
-              <p>1</p>
+              <p>{admin.businessType?.beachResorts?.length}</p>
               </div>
             }
           />
@@ -86,7 +101,7 @@ export const AdminProfile = () => {
             content={
               <div className='flex items-center justify-between'>
               <FaHotel size={24}/>
-              <p>1</p>
+              <p>{admin.businessType?.hotelRoom?.length}</p>
               </div>
             }
           />
@@ -95,7 +110,7 @@ export const AdminProfile = () => {
             content={
               <div className='flex items-center justify-between'>
               <IoFastFood size={24}/>
-              <p>1</p>
+              <p>{admin.businessType?.foodRestaurant?.length}</p>
               </div>
             }
           />

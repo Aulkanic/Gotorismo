@@ -21,12 +21,12 @@ export const LandingPage = () => {
           <CustomButton
             children={'Log in'}
             type='primary'
+            link='/Login'
             classes='w-32 rounded-xl'
           />
         </div>
       </div>
     </div>
-
   </div>
   )
 }

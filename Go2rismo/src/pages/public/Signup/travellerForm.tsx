@@ -38,60 +38,59 @@ export const TravelFrm = () => {
     const [api, contextHolder] = notification.useNotification();
     const [loading,setLoading] = useState(false)
     const onFinish = async(values: any) => {
-        try {
-            
-            const validIdFiles = values.validId;
-            if(!Array.isArray(validIdFiles)){
-                api.error({
-                    message:'Form Submission',
-                    description: 'Failed to submit form. Please input all necessary details.',
-                })
-                return
-            }
-            const isEmailUser = userList?.allUser.find((item: { email: any; }) => item.email === values.email);
-            if(isEmailUser){
-                api.error({
-                    message:'Email already used',
-                    description: 'Failed to submit form. Please use other email.',
-                })
-                return
-            }
-            setLoading(true)
-            const uploading = validIdFiles?.map(async (file:any) => {
-                const filePath = `documents/${file.name}`;
-                const upload = await uploadImageToStorage(file.originFileObj,filePath)
-                return upload
-            })
-            const imageUrl = await Promise.all(uploading)
-            const dataToSend = {
-                address:values.address,
-                birthDate: values.birthDate.toISOString(),
-                email:values.email,
-                firstName:values.firstName,
-                lastName:values.lastName,
-                password:values.password,
-                phoneNumber: values.phoneNumber,
-                validId: imageUrl[0],
-                userType:'traveller'
-            }
-            await addData('tbl_traveller',dataToSend);
-            api.success({
-                message: 'Form Submission',
-                description: 'Form submitted successfully!',
-            });
-            setLoading(false)
-            form.resetFields();
-            setTimeout(() =>{
-                navigate('/Login')
-            },2000)
-        } catch (error) {
-            console.log(error)
+    try {          
+        const validIdFiles = values.validId;
+        if(!Array.isArray(validIdFiles)){
             api.error({
                 message:'Form Submission',
-                description: 'Failed to submit form. Please try again later.',
+                description: 'Failed to submit form. Please input all necessary details.',
             })
-            setLoading(false)
+            return
         }
+        const isEmailUser = userList?.allUser.find((item: { email: any; }) => item.email === values.email);
+        if(isEmailUser){
+            api.error({
+                message:'Email already used',
+                description: 'Failed to submit form. Please use other email.',
+            })
+            return
+        }
+        setLoading(true)
+        const uploading = validIdFiles?.map(async (file:any) => {
+            const filePath = `documents/${file.name}`;
+            const upload = await uploadImageToStorage(file.originFileObj,filePath)
+            return upload
+        })
+        const imageUrl = await Promise.all(uploading)
+        const dataToSend = {
+            address:values.address,
+            birthDate: values.birthDate.toISOString(),
+            email:values.email,
+            firstName:values.firstName,
+            lastName:values.lastName,
+            password:values.password,
+            phoneNumber: values.phoneNumber,
+            validId: imageUrl[0],
+            userType:'traveller'
+        }
+        await addData('tbl_traveller',dataToSend);
+        api.success({
+            message: 'Form Submission',
+            description: 'Form submitted successfully!',
+        });
+        setLoading(false)
+        form.resetFields();
+        setTimeout(() =>{
+            navigate('/Login')
+        },2000)
+    } catch (error) {
+        console.log(error)
+        api.error({
+            message:'Form Submission',
+            description: 'Failed to submit form. Please try again later.',
+        })
+        setLoading(false)
+    }
     };
     
     const onFinishFailed = (errorInfo: any) => {

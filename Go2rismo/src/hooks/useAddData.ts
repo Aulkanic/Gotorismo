@@ -7,6 +7,7 @@ export const addData = async (collectionName: string,dataToAdd:any): Promise<str
     try {
         const Datacollection = collection(db,collectionName)
         const docRef = await addDoc(Datacollection, dataToAdd);
+        console.log(docRef)
         return docRef.id;
       } catch (error) {
         console.error("Error adding document: ", error);

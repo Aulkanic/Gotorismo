@@ -187,7 +187,7 @@ export const BusinessFrm = () => {
                 <Input />
                 </Form.Item>
                 <Form.Item<FieldType> 
-                label="Select Type"
+                label="Select Business Type"
                 name='businessType'
                 className='w-full mt-2'
                 rules={[{ required: true, message: 'Please select your business type first!' }]}

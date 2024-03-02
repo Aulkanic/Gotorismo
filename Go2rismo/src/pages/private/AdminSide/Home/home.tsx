@@ -1,7 +1,11 @@
-import React from 'react'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useEffect } from 'react'
 import { Input } from 'antd';
 import type { SearchProps } from 'antd/es/input/Search';
 import { CustomSwiper } from '../../../../components/swiper/CustomSwiper';
+import { fetchData } from '../../../../hooks/useFetchData';
+import { saveAllBusiness, selector } from '../../../../zustand/store/store.provide';
+import useStore from '../../../../zustand/store/store';
 
 const { Search } = Input;
 const onSearch: SearchProps['onSearch'] = (value, _e, info) => console.log(info?.source, value);
@@ -14,6 +18,15 @@ const tourist = [
 ]
 
 export const AdminDashboard = () => {
+  const allPost = useStore(selector('admin'))
+  async function Fetch(){
+    const response = await fetchData('tbl_postList');
+    saveAllBusiness(response)
+  }
+  useEffect(() =>{
+    Fetch()
+  },[])
+  
   return (
     <div className='flex flex-wrap'>
       <div className='w-[1100px]'>
@@ -30,8 +43,8 @@ export const AdminDashboard = () => {
             <h1 className='font-bold text-3xl'>Tourist Spots</h1>
             <div className='w-full p-4'>
             <CustomSwiper
-              images={tourist}
-              slideNum={4}
+              images={allPost.businessType?.beachResorts?.map((item: { photos: any; name: any; }) =>({url:item.photos,name:item.name}))}
+              slideNum={2}
               spaceBetween={32}
               />
             </div>
@@ -41,7 +54,7 @@ export const AdminDashboard = () => {
             <h1 className='font-bold text-3xl'>Hotel and Room</h1>
             <div className='w-full p-4'>
             <CustomSwiper
-              images={tourist}
+              images={allPost.businessType?.hotelRoom?.map((item: { photos: any; name: any; }) =>({url:item.photos,name:item.name}))}
               slideNum={4}
               spaceBetween={32}
               />

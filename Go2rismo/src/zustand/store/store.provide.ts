@@ -11,7 +11,12 @@ export const{
     logoutTraveller,
     setUserType,
     removeUserType,
-    allUser
+    allUser,
+    createBusiness,
+    fetchBusiness,
+    saveAllBusiness,
+    saveAllUser,
+    saveAllBusinessForBusinessMan
 } = storeProvider
 
 export { selector, storeProvider };
