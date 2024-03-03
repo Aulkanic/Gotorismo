@@ -12,6 +12,7 @@ interface BusinessState {
     info?: T_Business | null;
     businessList?: any;
     businessType?:any;
+    events?:any;
     responseMsg?:string;
 }
 export interface BusinessSlice{
@@ -21,12 +22,14 @@ export interface BusinessSlice{
     createBusiness:(payload:any) => void;
     fetchBusiness:(payload:any) => void;
     saveAllBusinessForBusinessMan:(payload:any) => void;
+    saveAllEvents:(payload:any) => void;
 }
 
 const initialState: BusinessState ={
     loading:false,
     info:null,
     businessList:[],
+    events:[],
     responseMsg:""
 }
 const createBusinessSlice: StateCreator<BusinessSlice> = (set) =>({
@@ -138,7 +141,31 @@ const createBusinessSlice: StateCreator<BusinessSlice> = (set) =>({
             ...state,
             business: {
               ...state.business,
-              info: null,
+              businessType: [],
+              loading: false,
+              responseMsg: 'Invalid Credentials',
+            },
+          }));        
+      }
+    },
+    saveAllEvents:async(payload:any) =>{
+      try {
+          set((state) => ({
+            ...state,
+            business: {
+              ...state.business,
+              events:payload,
+              loading: false,
+              responseMsg: '',
+            },
+          }));          
+      } catch (error) {
+          console.log('Error at: ', error);
+          set((state) => ({
+            ...state,
+            business: {
+              ...state.business,
+              events: null,
               loading: false,
               responseMsg: 'Invalid Credentials',
             },

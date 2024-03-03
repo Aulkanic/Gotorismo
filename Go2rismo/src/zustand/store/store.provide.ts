@@ -16,7 +16,8 @@ export const{
     fetchBusiness,
     saveAllBusiness,
     saveAllUser,
-    saveAllBusinessForBusinessMan
+    saveAllBusinessForBusinessMan,
+    saveAllEvents
 } = storeProvider
 
 export { selector, storeProvider };
