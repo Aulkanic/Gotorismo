@@ -9,7 +9,6 @@ interface IRadion{
     value:string;
 }
 export default function CustomRadio(props: IRadion){
-    console.log(props)
     return (
     <Radio.Group onChange={props.onChange} value={props.value}  buttonStyle="solid">
         {props.choices?.map((data,idx) =>(

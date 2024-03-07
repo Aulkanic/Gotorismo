@@ -17,7 +17,11 @@ export interface T_Business{
     phoneNumber: string;
     validID: string;  
 }
-
+export interface T_Events{
+    Title: string;
+    Content: string;
+    Date: string;
+}
 export interface T_Traveller{
     address: string;
     birthDate: string;

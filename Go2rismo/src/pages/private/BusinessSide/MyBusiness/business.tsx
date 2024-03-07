@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect,useRef, useState } from 'react'
-import {  Form, Input,Select,Upload, notification,Button, Image, Flex, RadioChangeEvent } from 'antd';
+import {  Form, Input,Select,Upload, notification,Button, Image, Flex, RadioChangeEvent, List, Skeleton } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { CustomButton } from '../../../../components/Button/CustomButton';
 import { uploadImageToStorage } from '../../../../config/uploadFile';
@@ -17,6 +17,7 @@ import 'swiper/css/thumbs';
 import { Navigation,Thumbs ,FreeMode, Pagination} from 'swiper/modules';
 import { Swiper, SwiperSlide,type SwiperRef } from 'swiper/react';
 import CustomRadio from '../../../../components/radio/customRadio';
+import { T_Business } from '../../../../types';
 
 type FieldType = {
   name?: string;
@@ -31,8 +32,12 @@ export const MyBusiness = () => {
   const swiperRef = useRef<SwiperRef>(null);
   const [form] = Form.useForm();
   const business = useStore(selector('business'))
+  const [initLoading, setInitLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [act,setAct] = useState('')
   const [post,setPost] = useState('')
+  const [list, setList] = useState<T_Business[]>([]);
   const [api, contextHolder] = notification.useNotification();
   const onFinish = async(values: any) => {
     try {    
@@ -45,6 +50,10 @@ export const MyBusiness = () => {
             })
             return
         }
+        setIsLoading(true)
+        notification.success({
+          message: 'Login Successfully',
+        });
         const uploading = Photos?.map(async (file:any) => {
             const filePath = `businessGallery/${file.name}_${business.info.id}`;
             const upload = await uploadImageToStorage(file.originFileObj,filePath)
@@ -65,13 +74,19 @@ export const MyBusiness = () => {
         const response = await addData('tbl_postList',dataToSend)
         if(response){
           Fetch()
+          setIsLoading(false)
+          notification.success({
+              message: 'New Record added successfully'
+          });
           form.resetFields();
         }
       }else{
+        setIsLoading(true)
         const dataToSend = {
             Title:values.name,
             Content: values.location,
-            Date: new Date(Date.now()).toLocaleString()
+            Date: new Date(Date.now()).toLocaleString(),
+            businessId:business.info.id,
         }
         await executeOnProcess(() =>
             customAlert('info', MESSAGES.PLEASE_WAIT, MESSAGES.EXECUTING_TASK),
@@ -79,6 +94,10 @@ export const MyBusiness = () => {
         const response = await addData('tbl_announcements&Events',dataToSend)
         if(response){
           Fetch()
+          setIsLoading(false)
+          notification.success({
+              message: 'New Record added successfully'
+          });
           form.resetFields();
         }        
       }     
@@ -110,17 +129,46 @@ export const MyBusiness = () => {
 
   };
   async function Fetch(){
+    setInitLoading(true)
     const response = await fetchData('tbl_postList')
     const res = await fetchData('tbl_announcements&Events')
     if(response && res){
       fetchBusiness(response)
       saveAllEvents(res)
+      setInitLoading(false)
     }
   }
   useEffect(() =>{
     Fetch()
   },[])
-  console.log(business)
+  useEffect(() =>{
+    const list = business.businessList?.filter((item: { businessId: any; }) => item.businessId === business.info.id)
+    const data = list?.map((item:any) => ({...item,loading:false}))
+    setList(data.slice(0, countPerPage));
+  },[business.businessList, business.info.id])
+  const countPerPage = 2;
+
+  const onLoadMore = () => {
+    setLoading(true);
+    const nextItems = business.businessList?.slice(list.length, list.length + countPerPage);
+    setList([...list, ...nextItems]);
+    setLoading(false);
+  };
+
+  const loadMore =
+  !initLoading && !loading ? (
+    <div
+      style={{
+        textAlign: 'center',
+        marginTop: 12,
+        height: 32,
+        lineHeight: '32px',
+      }}
+    >
+      <Button onClick={onLoadMore}>Load more</Button>
+    </div>
+  ) : null;
+  console.log(list)
   return (
     <div className='flex flex-wrap'>
       <div className='p-4 w-[600px]'>
@@ -142,6 +190,7 @@ export const MyBusiness = () => {
               <CustomRadio
                 onChange={(e) => onChange(e,'form')}
                 choices={['Business', 'Announcement/Events']}
+                
                 value={act}
               />
             </Flex>
@@ -218,14 +267,14 @@ export const MyBusiness = () => {
               children={'Add'}
               type='primary'
               htmlType='submit'
-              loading={business.loading}
+              loading={isLoading}
               classes='w-32 rounded-xl'
             />
           </Form.Item>
       </Form>   
       {contextHolder}
       </div>
-      <div className='flex flex-1 flex-col gap-4 p-8 mt-4 mr-4 rounded-lg'>
+      <div className='flex flex-1 h-max flex-col gap-4 p-8 mt-4 mr-4 rounded-lg'>
         <h1 className='font-bold text-3xl'>Post</h1>
         <div>
         <Flex vertical gap="middle" className='mb-0'>
@@ -236,42 +285,41 @@ export const MyBusiness = () => {
           />
         </Flex>
         </div>
-        {post === 'Business' ? <Swiper
-          modules={[FreeMode, Navigation, Thumbs,Pagination]}
-          spaceBetween={32}
-          direction={'vertical'}
-          slidesPerView={3}
-          pagination={{
-            clickable: true,
-          }}
-          watchSlidesProgress={true}
-          ref={swiperRef}
-          className='w-full flex flex-col h-[700px] p-4'
-        >
-          {business.businessList?.map((data:any,idx:number) =>(
-            <SwiperSlide key={idx} virtualIndex={idx}>
-          <div key={idx} className='bg-white p-4 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]'>
-            <h3 className='font-bold text-lg mb-2'>{data.name}</h3>
-            <div className='flex gap-4'>
-              <div>
-              <Image.PreviewGroup
-                items={data?.photos}
-              >
-                <Image
-                  width={200}
-                  className='rounded-lg border-2 border-[#00256E]'
-                  src={data.photos?.length > 0 ? data.photos[0] : ''}
-                />
-              </Image.PreviewGroup>
-              </div>
-              <div>
-                {data.description}
-              </div>
-            </div>
-          </div>
-            </SwiperSlide>
-          ))}
-        </Swiper> : (
+        {post === 'Business' ? 
+        <List
+        className="demo-loadmore-list"
+        loading={initLoading}
+        itemLayout="horizontal"
+        loadMore={loadMore}
+        dataSource={list}
+        renderItem={(item:any,idx:number) => (
+          <List.Item>
+            <Skeleton avatar title={false} loading={item.loading} active>
+            <div key={idx} className='bg-white p-4 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]'>
+                    <div className='flex justify-between'>
+                    <h3 className='font-bold text-lg'>{item.name}</h3>
+                    <p className='text-lg font-semibold italic'>{item.location}</p>
+                    </div>
+                    <div className='flex gap-4'>
+                      <div>
+                      <Image.PreviewGroup
+                        items={item?.photos}
+                      >
+                        <Image
+                          width={200}
+                          className='rounded-lg border-2 border-[#00256E]'
+                          src={item.photos?.length > 0 ? item.photos[0] : ''}
+                        />
+                      </Image.PreviewGroup>
+                      </div>
+                      <div>
+                        {item.description}
+                      </div>
+                    </div>
+                  </div>
+            </Skeleton>
+          </List.Item>
+        )} /> : (
         <Swiper
         modules={[FreeMode, Navigation, Thumbs,Pagination]}
         spaceBetween={32}
@@ -306,3 +354,4 @@ export const MyBusiness = () => {
     </div>
   )
 }
+

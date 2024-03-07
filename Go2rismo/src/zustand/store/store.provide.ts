@@ -17,7 +17,9 @@ export const{
     saveAllBusiness,
     saveAllUser,
     saveAllBusinessForBusinessMan,
-    saveAllEvents
+    saveAllEvents,
+    saveAllPost,
+    saveAllEventsForTraveller
 } = storeProvider
 
 export { selector, storeProvider };
