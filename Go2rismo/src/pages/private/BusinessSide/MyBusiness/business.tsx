@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect,useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {  Form, Input,Select,Upload, notification,Button, Image, Flex, RadioChangeEvent, List, Skeleton } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { CustomButton } from '../../../../components/Button/CustomButton';
@@ -8,16 +8,8 @@ import useStore from '../../../../zustand/store/store';
 import { fetchBusiness, saveAllEvents, selector } from '../../../../zustand/store/store.provide';
 import { fetchData } from '../../../../hooks/useFetchData';
 import { addData } from '../../../../hooks/useAddData';
-import { customAlert, executeOnProcess } from '../../../../utils/utils';
-import { MESSAGES } from '../../../../utils/constant';
-import 'swiper/css';
-import 'swiper/css/free-mode';
-import 'swiper/css/navigation';
-import 'swiper/css/thumbs';
-import { Navigation,Thumbs ,FreeMode, Pagination} from 'swiper/modules';
-import { Swiper, SwiperSlide,type SwiperRef } from 'swiper/react';
 import CustomRadio from '../../../../components/radio/customRadio';
-import { T_Business } from '../../../../types';
+import { T_Business, T_Events } from '../../../../types';
 
 type FieldType = {
   name?: string;
@@ -29,7 +21,6 @@ type FieldType = {
 const { TextArea } = Input;
 
 export const MyBusiness = () => {
-  const swiperRef = useRef<SwiperRef>(null);
   const [form] = Form.useForm();
   const business = useStore(selector('business'))
   const [initLoading, setInitLoading] = useState(true);
@@ -38,7 +29,9 @@ export const MyBusiness = () => {
   const [act,setAct] = useState('')
   const [post,setPost] = useState('')
   const [list, setList] = useState<T_Business[]>([]);
+  const [list1, setList1] = useState<T_Events[]>([]);
   const [api, contextHolder] = notification.useNotification();
+
   const onFinish = async(values: any) => {
     try {    
       if(act === 'Business') {
@@ -51,8 +44,8 @@ export const MyBusiness = () => {
             return
         }
         setIsLoading(true)
-        notification.success({
-          message: 'Login Successfully',
+        notification.info({
+          message: 'The task is being executed. Please wait until it is complete',
         });
         const uploading = Photos?.map(async (file:any) => {
             const filePath = `businessGallery/${file.name}_${business.info.id}`;
@@ -68,9 +61,6 @@ export const MyBusiness = () => {
             businessId:business.info.id,
             photos:imageUrl
         }
-        await executeOnProcess(() =>
-            customAlert('info', MESSAGES.PLEASE_WAIT, MESSAGES.EXECUTING_TASK),
-          );
         const response = await addData('tbl_postList',dataToSend)
         if(response){
           Fetch()
@@ -88,9 +78,9 @@ export const MyBusiness = () => {
             Date: new Date(Date.now()).toLocaleString(),
             businessId:business.info.id,
         }
-        await executeOnProcess(() =>
-            customAlert('info', MESSAGES.PLEASE_WAIT, MESSAGES.EXECUTING_TASK),
-          );
+        notification.info({
+          message: 'The task is being executed. Please wait until it is complete',
+        });
         const response = await addData('tbl_announcements&Events',dataToSend)
         if(response){
           Fetch()
@@ -144,8 +134,11 @@ export const MyBusiness = () => {
   useEffect(() =>{
     const list = business.businessList?.filter((item: { businessId: any; }) => item.businessId === business.info.id)
     const data = list?.map((item:any) => ({...item,loading:false}))
+    const list1 = business.events
+    const data1 = list1?.map((item:any) => ({...item,loading:false}))
     setList(data.slice(0, countPerPage));
-  },[business.businessList, business.info.id])
+    setList1(data1.slice(0, countPerPage))
+  },[business.businessList, business.events, business.info.id])
   const countPerPage = 2;
 
   const onLoadMore = () => {
@@ -154,7 +147,6 @@ export const MyBusiness = () => {
     setList([...list, ...nextItems]);
     setLoading(false);
   };
-
   const loadMore =
   !initLoading && !loading ? (
     <div
@@ -166,6 +158,26 @@ export const MyBusiness = () => {
       }}
     >
       <Button onClick={onLoadMore}>Load more</Button>
+    </div>
+  ) : null;
+
+  const onLoadMore1 = () => {
+    setLoading(true);
+    const nextItems = business.events?.slice(list.length, list.length + countPerPage);
+    setList1([...list1, ...nextItems]);
+    setLoading(false);
+  };
+  const loadMore1 =
+  !initLoading && !loading ? (
+    <div
+      style={{
+        textAlign: 'center',
+        marginTop: 12,
+        height: 32,
+        lineHeight: '32px',
+      }}
+    >
+      <Button onClick={onLoadMore1}>Load more</Button>
     </div>
   ) : null;
   console.log(list)
@@ -320,38 +332,33 @@ export const MyBusiness = () => {
             </Skeleton>
           </List.Item>
         )} /> : (
-        <Swiper
-        modules={[FreeMode, Navigation, Thumbs,Pagination]}
-        spaceBetween={32}
-        direction={'vertical'}
-        slidesPerView={3}
-        pagination={{
-          clickable: true,
-        }}
-        watchSlidesProgress={true}
-        ref={swiperRef}
-        className='w-full flex flex-col h-[700px] p-4'
-        >
-        {business.events?.map((data:any,idx:number) =>(
-          <SwiperSlide key={idx} virtualIndex={idx}>
+          <List
+          className="demo-loadmore-list"
+          loading={initLoading}
+          itemLayout="horizontal"
+          loadMore={loadMore1}
+          dataSource={list1}
+          renderItem={(item:any,idx:number) => (
+            <List.Item>
+              <Skeleton avatar title={false} loading={item.loading} active>
               <div key={idx} className='bg-white p-4 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]'>
-
                 <div className='flex flex-col gap-4'>
                   <div className='flex justify-between items-center'>
-                  <h3 className='font-bold text-lg mb-2'>{data.Title}</h3>
-                  <p>{data.Date}</p>
+                  <h3 className='font-bold text-lg mb-2'>{item.Title}</h3>
+                  <p>{item.Date}</p>
                   </div>
                   <div>
-                    {data.Content}
+                    {item.Content}
                   </div>
                 </div>
               </div>
-                </SwiperSlide>
-        ))}
-      </Swiper>         
+              </Skeleton>
+            </List.Item>
+          )} />       
         )}
       </div>
     </div>
   )
 }
+
 

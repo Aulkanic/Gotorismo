@@ -14,6 +14,7 @@ export const RouterUrl = {
     TRAVELLERADVENTURE:'/UserDashBoard/Adventures',
     TRAVELLERMAPS:'/UserDashBoard/Map',
     TRAVELLERPROFILE:'/UserDashBoard/Profile',
+    TOURISTSELECTED:'/UserDashBoard/HomePage/:type/:name',
     BUSINESSSIDE:'/BusinessDashBoard',
     BUSINESSBOOKING:'/BusinessDashBoard/Booking',
     BUSINESSMINE:'/BusinessDashBoard/MyBusiness',

@@ -5,6 +5,7 @@ import { RouterUrl } from './routes';
 import { LandingPage,Signup,Login, AdminDashboard, Accounts, AdminTalk, TravelAdventure, TravelBooking, TravelMaps, TravelPlan, AdminProfile, TravelProfile, TravelDashboard, TravelTalk, BusinessBooking, MyBusiness, BusinessProfile, BusinessDashboard, BusinessTalk, AdminBooking } from './pages';
 import { Private, Public } from './layout';
 import { Error } from './pages/error/error';
+import TouristSelected from './pages/private/TravellerSide/Tourist';
 function App() {
   const router = createBrowserRouter([
     {
@@ -42,6 +43,7 @@ function App() {
         {path:RouterUrl.TRAVELLERPROFILE,element:<TravelProfile/>},
         {path:RouterUrl.TRAVELLERSIDE,element:<TravelDashboard/>},
         {path:RouterUrl.TRAVELLERTALK,element:<TravelTalk/>},
+        {path:RouterUrl.TOURISTSELECTED,element:<TouristSelected/>},
         {path:RouterUrl.BUSINESSBOOKING,element:<BusinessBooking/>},
         {path:RouterUrl.BUSINESSMINE,element:<MyBusiness/>},
         {path:RouterUrl.BUSINESSPROFILE,element:<BusinessProfile/>},

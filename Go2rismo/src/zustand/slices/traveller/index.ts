@@ -8,6 +8,7 @@ interface TravellerState {
     loading:boolean;
     info?: T_Traveller | null;
     businessType?:any;
+    post?:any;
     announcements?:any;
     responseMsg:string;
 }
@@ -80,6 +81,7 @@ const createTravellerSlice: StateCreator<TravellerSlice> = (set) =>({
                 touristSpots:payload?.filter((item: { type: string; }) => item.type === 'Tourist Spots'),
                 foodRestaurant:payload?.filter((item: { type: string; }) => item.type === 'Food/Restaurant'),
               },
+              post:payload,
               loading: false,
               responseMsg: '',
             },

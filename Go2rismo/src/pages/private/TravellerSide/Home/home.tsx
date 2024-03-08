@@ -1,19 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Input, List } from "antd";
 import { fetchData } from "../../../../hooks/useFetchData";
 import useStore from "../../../../zustand/store/store";
 import { saveAllEventsForTraveller, saveAllPost, selector } from "../../../../zustand/store/store.provide";
-import { CustomSwiper } from "../../../../components/swiper/CustomSwiper";
 import { T_Events } from "../../../../types";
+import { Swiper, SwiperSlide,type SwiperRef } from 'swiper/react';
+import { Pagination, Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import './styles.css';
 
 const  { Search } = Input
 export const TravelDashboard = () => {
   const countPerPage = 1;
   const allPost = useStore(selector('traveller'))
+  const swiperRef = useRef<SwiperRef>(null);
   const [initLoading, setInitLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [list, setList] = useState<T_Events[]>([]);
+  console.log(allPost)
   async function Fetch(){
     setInitLoading(true);
     const response = await fetchData('tbl_postList');
@@ -25,6 +32,12 @@ export const TravelDashboard = () => {
   useEffect(() =>{
     Fetch()
   },[])
+  useEffect(() =>{
+    const list1 = allPost.announcements
+    const data1 = list1?.map((item:any) => ({...item,loading:false}))
+    setList(data1.slice(0, countPerPage))
+  },[allPost.announcements])
+
   const onLoadMore = () => {
     setLoading(true);
     const nextItems = allPost.announcements?.slice(list.length, list.length + countPerPage);
@@ -45,6 +58,7 @@ export const TravelDashboard = () => {
       <Button onClick={onLoadMore}>Load more</Button>
     </div>
   ) : null;
+  console.log(list)
   return (
     <div className='flex flex-nowrap'>
       <div className='w-[1100px]'>
@@ -58,25 +72,57 @@ export const TravelDashboard = () => {
         <div className='px-8 flex flex-col'>
           <div>
             <h1 className='font-bold text-3xl'>Tourist Spots</h1>
-            <div className='w-full p-4'>
-            <CustomSwiper
-              images={allPost.businessType?.beachResorts?.map((item: { photos: any; name: any; }) =>({url:item.photos,name:item.name}))}
-              slideNum={2}
-              spaceBetween={32}
-              />
+            <div className='w-[980px] p-4'>
+            <Swiper
+              ref={swiperRef}
+              slidesPerView={4}
+              spaceBetween={0}
+              navigation={true}
+              modules={[Pagination, Navigation]}
+              className=''
+            >
+             {allPost?.businessType.beachResorts?.map((item:any,idx:number) =>(
+              <SwiperSlide className=''>
+                <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
+                <div className='relative'>
+                <img 
+                src={item.photos[0]} 
+                className="w-full rounded-lg w-[200px] h-[150px]"
+                />
+                <p className='bg-white/40 font-bold backdrop-blur-sm rounded-lg px-4 py-2 absolute bottom-4 left-4'>{item.name}</p>
+                </div>
+                </a>
+              </SwiperSlide>
+             ))}
+            </Swiper>
             </div>
-
           </div>
           <div>
             <h1 className='font-bold text-3xl'>Hotel and Room</h1>
-            <div className='w-full p-4'>
-            <CustomSwiper
-              images={allPost.businessType?.hotelRoom?.map((item: { photos: any; name: any; }) =>({url:item.photos,name:item.name}))}
-              slideNum={4}
-              spaceBetween={32}
-              />
+            <div className='w-[980px] p-4'>
+            <Swiper
+              ref={swiperRef}
+              slidesPerView={4}
+              spaceBetween={0}
+              navigation={true}
+              modules={[Pagination, Navigation]}
+              className=''
+            >
+             {allPost?.businessType.hotelRoom?.map((item:any,idx:number) =>(
+              <SwiperSlide className=''>
+                <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
+                <div className='relative'>
+                <img 
+                src={item.photos[0]} 
+                className="w-full rounded-lg w-[200px] h-[150px]"
+                />
+                <p className='bg-white/40 font-bold backdrop-blur-sm rounded-lg px-4 py-2 absolute bottom-4 left-4'>{item.name}</p>
+                </div>
+                </a>
+              </SwiperSlide>
+             ))}
+            </Swiper>
             </div>
-
           </div>
         </div>
       </div>
@@ -88,7 +134,7 @@ export const TravelDashboard = () => {
               loading={initLoading}
               itemLayout="horizontal"
               loadMore={loadMore}
-              dataSource={allPost.announcements?.slice(0, countPerPage)}
+              dataSource={list}
               renderItem={(item:any) => (
                 <List.Item>
                   <div>
