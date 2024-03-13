@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {  Form, Input,DatePicker,Select, Checkbox,Upload, notification,Button } from 'antd';
+import {  Form, Input,DatePicker,Select,Upload, notification,Button } from 'antd';
 import { CustomButton } from '../../../components/Button/CustomButton';
 import Logo from '../../../assets/app logo.png'
 import { UploadOutlined } from '@ant-design/icons';
@@ -138,7 +138,7 @@ export const TravelFrm = () => {
             label="First Name"
             name="firstName"
             className='mb-2'
-            rules={[{ required: true, message: 'Please input your username!' }]}
+            rules={[{ required: true, message: 'Please input your First Name!' }]}
             >
             <Input />
             </Form.Item>
@@ -146,7 +146,7 @@ export const TravelFrm = () => {
             label="Last Name"
             name="lastName"
             className='mb-2'
-            rules={[{ required: true, message: 'Please input your username!' }]}
+            rules={[{ required: true, message: 'Please input your Last Name!' }]}
             >
             <Input />
             </Form.Item>
@@ -154,7 +154,7 @@ export const TravelFrm = () => {
             label="Birthdate:"
             name="birthDate"
             className='mb-2'
-            rules={[{ required: true, message: 'Please input your username!' }]}
+            rules={[{ required: true, message: 'Please input your Birthdate!' }]}
             >
             <DatePicker className='w-full' />
             </Form.Item>
@@ -162,7 +162,7 @@ export const TravelFrm = () => {
             label="Address"
             name="address"
             className='mb-2'
-            rules={[{ required: true, message: 'Please input your password!' }]}
+            rules={[{ required: true, message: 'Please input your Address!' }]}
             >
             <Input />
             </Form.Item>
@@ -209,20 +209,6 @@ export const TravelFrm = () => {
                 hasFeedback
             >
                 <Input.Password />
-            </Form.Item>
-            <Form.Item
-                name="agreement"
-                valuePropName="checked"
-                rules={[
-                {
-                    validator: (_, value) =>
-                    value ? Promise.resolve() : Promise.reject(new Error('Should accept agreement')),
-                },
-                ]}
-            >
-                <Checkbox className='text-nowrap ml-12'>
-                I agree to the Terms and Conditions
-                </Checkbox>
             </Form.Item>
             </div>
         </div>

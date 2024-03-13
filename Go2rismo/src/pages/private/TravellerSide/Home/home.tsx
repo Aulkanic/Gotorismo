@@ -19,8 +19,7 @@ export const TravelDashboard = () => {
   const swiperRef = useRef<SwiperRef>(null);
   const [initLoading, setInitLoading] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [list, setList] = useState<T_Events[]>([]);
-  console.log(allPost)
+  const [list, setList] = useState<T_Events[]>([])
   async function Fetch(){
     setInitLoading(true);
     const response = await fetchData('tbl_postList');
@@ -58,7 +57,6 @@ export const TravelDashboard = () => {
       <Button onClick={onLoadMore}>Load more</Button>
     </div>
   ) : null;
-  console.log(list)
   return (
     <div className='flex flex-nowrap'>
       <div className='w-[1100px]'>

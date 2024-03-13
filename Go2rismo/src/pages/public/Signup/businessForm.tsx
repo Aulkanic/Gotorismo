@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {  Form, Input,DatePicker,Select, Checkbox,Upload, notification, Button } from 'antd';
+import {  Form, Input,DatePicker,Select,Upload, notification, Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { CustomButton } from '../../../components/Button/CustomButton';
 import { uploadImageToStorage } from '../../../config/uploadFile';
@@ -251,20 +251,6 @@ export const BusinessFrm = () => {
                 className='mb-0'
                 >
                     <Input.Password />
-                </Form.Item>
-                <Form.Item
-                    name="agreement"
-                    valuePropName="checked"
-                    rules={[
-                    {
-                        validator: (_, value) =>
-                        value ? Promise.resolve() : Promise.reject(new Error('Should accept agreement')),
-                    },
-                    ]}
-                >
-                    <Checkbox className='text-nowrap ml-12'>
-                    I agree to the Terms and Conditions
-                    </Checkbox>
                 </Form.Item>
                 </div>
             </div>

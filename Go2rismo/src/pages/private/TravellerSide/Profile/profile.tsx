@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Avatar,Input } from 'antd';
 import {  UserOutlined } from '@ant-design/icons';
 import useStore from '../../../../zustand/store/store';
@@ -68,8 +68,8 @@ export const TravelProfile = () => {
           </div>
         </div>
       </div>
-      <div className='p-8 pb-0 flex flex-col justify-between h-[720px]'>
-        <div className='w-[800px] shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] h-[500px] p-4'>
+      <div className='p-8 pb-0 flex flex-col justify-between flex-1 h-[720px]'>
+        <div className='w-full shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] h-[500px] p-4'>
           <h1 className='font-bold text-2xl'>Notifications</h1>
         </div>
         <div className='flex items-end justify-end'>

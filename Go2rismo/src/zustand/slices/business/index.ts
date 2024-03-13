@@ -12,6 +12,7 @@ interface BusinessState {
     info?: T_Business | null;
     businessList?: any;
     businessType?:any;
+    allPost?:any;
     events?:any;
     responseMsg?:string;
 }
@@ -23,6 +24,7 @@ export interface BusinessSlice{
     fetchBusiness:(payload:any) => void;
     saveAllBusinessForBusinessMan:(payload:any) => void;
     saveAllEvents:(payload:any) => void;
+    saveAllPostBusiness:(payload:any) => void;
 }
 
 const initialState: BusinessState ={
@@ -166,6 +168,36 @@ const createBusinessSlice: StateCreator<BusinessSlice> = (set) =>({
             business: {
               ...state.business,
               events: null,
+              loading: false,
+              responseMsg: 'Invalid Credentials',
+            },
+          }));        
+      }
+    },
+    saveAllPostBusiness:async(payload:any) =>{
+      try {
+          set((state) => ({
+            ...state,
+            business: {
+              ...state.business,
+              businessType:{
+                hotelRoom:payload?.filter((item: { type: string; }) => item.type === 'Hotel & Rooms'),
+                beachResorts:payload?.filter((item: { type: string; }) => item.type === 'Beach Resorts'),
+                touristSpots:payload?.filter((item: { type: string; }) => item.type === 'Tourist Spots'),
+                foodRestaurant:payload?.filter((item: { type: string; }) => item.type === 'Food/Restaurant'),
+              },
+              allPost:payload,
+              loading: false,
+              responseMsg: '',
+            },
+          }));          
+      } catch (error) {
+          console.log('Error at: ', error);
+          set((state) => ({
+            ...state,
+            business: {
+              ...state.business,
+              businessType: [],
               loading: false,
               responseMsg: 'Invalid Credentials',
             },

@@ -8,7 +8,9 @@ interface AdminState {
     loading:boolean;
     info?: T_Admin | null;
     businessType?:any;
+    allPost?:any;
     allUser?:any;
+    events?:any;
     responseMsg?:string;
 }
 export interface AdminSlice{
@@ -17,6 +19,8 @@ export interface AdminSlice{
     logoutAdmin: () => void;
     saveAllBusiness:(payload:any) => void;
     saveAllUser:(payload:any) => void;
+    saveAllEventsAdmin:(payload:any) => void;
+    saveAllPostAdmin:(payload:any) => void;
 }
 
 const initialState: AdminState ={
@@ -119,6 +123,60 @@ const createAdminSlice: StateCreator<AdminSlice> = (set) =>({
             admin: {
               ...state.admin,
               info: null,
+              loading: false,
+              responseMsg: 'Invalid Credentials',
+            },
+          }));        
+      }
+    },
+    saveAllEventsAdmin:async(payload:any) =>{
+      try {
+          set((state) => ({
+            ...state,
+            admin: {
+              ...state.admin,
+              events:payload,
+              loading: false,
+              responseMsg: '',
+            },
+          }));          
+      } catch (error) {
+          console.log('Error at: ', error);
+          set((state) => ({
+            ...state,
+            admin: {
+              ...state.admin,
+              events: null,
+              loading: false,
+              responseMsg: 'Invalid Credentials',
+            },
+          }));        
+      }
+    },
+    saveAllPostAdmin:async(payload:any) =>{
+      try {
+          set((state) => ({
+            ...state,
+            admin: {
+              ...state.admin,
+              businessType:{
+                hotelRoom:payload?.filter((item: { type: string; }) => item.type === 'Hotel & Rooms'),
+                beachResorts:payload?.filter((item: { type: string; }) => item.type === 'Beach Resorts'),
+                touristSpots:payload?.filter((item: { type: string; }) => item.type === 'Tourist Spots'),
+                foodRestaurant:payload?.filter((item: { type: string; }) => item.type === 'Food/Restaurant'),
+              },
+              allPost:payload,
+              loading: false,
+              responseMsg: '',
+            },
+          }));          
+      } catch (error) {
+          console.log('Error at: ', error);
+          set((state) => ({
+            ...state,
+            admin: {
+              ...state.admin,
+              businessType: [],
               loading: false,
               responseMsg: 'Invalid Credentials',
             },

@@ -37,3 +37,12 @@ export interface T_Accounts {
     traveller: { id: string }[];
     business: { id: string }[];
 }
+
+export interface T_Reviews{
+    date:string;
+    reviewContent: string;
+    reviewRate:number;
+    travellerEmail:string;
+    travellerId:string;
+    travellerName:string
+}

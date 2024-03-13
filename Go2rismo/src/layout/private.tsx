@@ -17,7 +17,6 @@ export default function Private(){
     {id:1,name:'Booking',url:RouterUrl.TRAVELLERBOOKING},
     {id:2,name:'My Plan',url:RouterUrl.TRAVELLERPLAN},
     {id:4,name:'Adventure',url:RouterUrl.TRAVELLERADVENTURE},
-    {id:5,name:'Maps',url:RouterUrl.TRAVELLERMAPS},
     {id:6,name:'Profile',url:RouterUrl.TRAVELLERPROFILE},
   ] : user?.userType === 'admin' ?
   [
@@ -34,7 +33,7 @@ export default function Private(){
 
    const onSeletedMenu = useCallback((item:any) =>{
       setSelected(item.id)
-   },[selected])
+   },[])
    const handleLogout = () =>{
     removeUserType()
     user.userType === 'traveller' ? logoutTraveller() : user.userType === 'business' ? logoutBusiness : logoutAdmin()
@@ -42,7 +41,7 @@ export default function Private(){
    }
   return (!user?.isLogin) ? (
     <Navigate replace to={RouterUrl.LOGIN} />
-  ) : (
+  ) : ( 
     <div>
       <header className='bg-[#41E8D1] px-4 py-2 flex justify-between items-center'>
         <div className='flex gap-2 items-center'>

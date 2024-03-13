@@ -19,7 +19,10 @@ export const{
     saveAllBusinessForBusinessMan,
     saveAllEvents,
     saveAllPost,
-    saveAllEventsForTraveller
+    saveAllEventsForTraveller,
+    saveAllPostBusiness,
+    saveAllEventsAdmin,
+    saveAllPostAdmin
 } = storeProvider
 
 export { selector, storeProvider };

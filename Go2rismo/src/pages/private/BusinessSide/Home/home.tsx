@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button, Image, Input, List } from "antd";
 import { fetchData } from "../../../../hooks/useFetchData";
 import useStore from "../../../../zustand/store/store";
-import { saveAllEventsForTraveller, saveAllPost, selector } from "../../../../zustand/store/store.provide";
+import { saveAllEvents, saveAllPostBusiness, selector } from "../../../../zustand/store/store.provide";
 import { T_Events } from "../../../../types";
 import { Swiper, SwiperSlide,type SwiperRef } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
@@ -25,8 +25,9 @@ export const BusinessDashboard = () => {
     setInitLoading(true);
     const response = await fetchData('tbl_postList');
     const res = await fetchData('tbl_announcements&Events')
-    saveAllPost(response)
-    saveAllEventsForTraveller(res)
+    console.log(response)
+    saveAllPostBusiness(response)
+    saveAllEvents(res)
     setInitLoading(false);
   }
   useEffect(() =>{
@@ -81,7 +82,7 @@ export const BusinessDashboard = () => {
               modules={[Pagination, Navigation]}
               className=''
             >
-             {allPost?.businessType.beachResorts?.map((item:any,idx:number) =>(
+             {allPost?.businessType?.beachResorts?.map((item:any,idx:number) =>(
               <SwiperSlide className=''>
                 <div  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
                 <div className='relative'>
@@ -110,7 +111,7 @@ export const BusinessDashboard = () => {
               modules={[Pagination, Navigation]}
               className=''
             >
-             {allPost?.businessType.hotelRoom?.map((item:any,idx:number) =>(
+             {allPost?.businessType?.hotelRoom?.map((item:any,idx:number) =>(
               <SwiperSlide className=''>
                 <div key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
                 <div className='relative'>
