@@ -11,6 +11,7 @@ interface AdminState {
     allPost?:any;
     allUser?:any;
     events?:any;
+    booking?:any;
     responseMsg?:string;
 }
 export interface AdminSlice{
@@ -19,6 +20,7 @@ export interface AdminSlice{
     logoutAdmin: () => void;
     saveAllBusiness:(payload:any) => void;
     saveAllUser:(payload:any) => void;
+    saveAllBookingAdmin:(paylaod:any) =>void;
     saveAllEventsAdmin:(payload:any) => void;
     saveAllPostAdmin:(payload:any) => void;
 }
@@ -28,7 +30,8 @@ const initialState: AdminState ={
     info:null,
     businessType:[],
     allUser:[],
-    responseMsg:""
+    responseMsg:"",
+    booking:null
 }
 const createAdminSlice: StateCreator<AdminSlice> = (set) =>({
     admin: initialState,
@@ -82,7 +85,7 @@ const createAdminSlice: StateCreator<AdminSlice> = (set) =>({
                 hotelRoom:payload?.filter((item: { type: string; }) => item.type === 'Hotel & Rooms'),
                 beachResorts:payload?.filter((item: { type: string; }) => item.type === 'Beach Resorts'),
                 touristSpots:payload?.filter((item: { type: string; }) => item.type === 'Tourist Spots'),
-                foodRestaurant:payload?.filter((item: { type: string; }) => item.type === 'Food/Restaurant'),
+                foodRestaurant:payload?.filter((item: { type: string; }) => item.type === 'Food & Restaurant'),
               },
               loading: false,
               responseMsg: '',
@@ -163,7 +166,7 @@ const createAdminSlice: StateCreator<AdminSlice> = (set) =>({
                 hotelRoom:payload?.filter((item: { type: string; }) => item.type === 'Hotel & Rooms'),
                 beachResorts:payload?.filter((item: { type: string; }) => item.type === 'Beach Resorts'),
                 touristSpots:payload?.filter((item: { type: string; }) => item.type === 'Tourist Spots'),
-                foodRestaurant:payload?.filter((item: { type: string; }) => item.type === 'Food/Restaurant'),
+                foodRestaurant:payload?.filter((item: { type: string; }) => item.type === 'Food & Restaurant'),
               },
               allPost:payload,
               loading: false,
@@ -177,6 +180,31 @@ const createAdminSlice: StateCreator<AdminSlice> = (set) =>({
             admin: {
               ...state.admin,
               businessType: [],
+              loading: false,
+              responseMsg: 'Invalid Credentials',
+            },
+          }));        
+      }
+    },
+    saveAllBookingAdmin:async(payload:any) =>{
+      const allData = payload?.map((item: any,idx: number) => ({...item,NoID:idx+1}))
+      try {
+          set((state) => ({
+            ...state,
+            admin: {
+              ...state.admin,
+              booking:allData,
+              loading: false,
+              responseMsg: '',
+            },
+          }));          
+      } catch (error) {
+          console.log('Error at: ', error);
+          set((state) => ({
+            ...state,
+            admin: {
+              ...state.admin,
+              booking: null,
               loading: false,
               responseMsg: 'Invalid Credentials',
             },

@@ -8,7 +8,10 @@ interface TravellerState {
     loading:boolean;
     info?: T_Traveller | null;
     businessType?:any;
+    favorites?:any;
+    booking?:any;
     post?:any;
+    itinerary?:any;
     announcements?:any;
     responseMsg:string;
 }
@@ -17,6 +20,9 @@ export interface TravellerSlice{
     saveTravellerInfo:(payload:any) => void;
     saveAllPost:(payload:any) => void;
     saveAllEventsForTraveller:(payload:any) => void;
+    saveAllFavorites:(payload:any) =>  void;
+    saveAllBooking:(paylaod:any) =>void;
+    saveAllItinerary:(payload:any) => void;
     logoutTraveller: () => void
 }
 
@@ -25,7 +31,10 @@ const initialState: TravellerState ={
     info:null,
     businessType:[],
     announcements:[],
-    responseMsg:""
+    favorites:null,
+    itinerary:null,
+    responseMsg:"",
+    booking:null
 }
 const createTravellerSlice: StateCreator<TravellerSlice> = (set) =>({
     traveller: initialState,
@@ -79,7 +88,7 @@ const createTravellerSlice: StateCreator<TravellerSlice> = (set) =>({
                 hotelRoom:payload?.filter((item: { type: string; }) => item.type === 'Hotel & Rooms'),
                 beachResorts:payload?.filter((item: { type: string; }) => item.type === 'Beach Resorts'),
                 touristSpots:payload?.filter((item: { type: string; }) => item.type === 'Tourist Spots'),
-                foodRestaurant:payload?.filter((item: { type: string; }) => item.type === 'Food/Restaurant'),
+                foodRestaurant:payload?.filter((item: { type: string; }) => item.type === 'Food & Restaurant'),
               },
               post:payload,
               loading: false,
@@ -123,6 +132,80 @@ const createTravellerSlice: StateCreator<TravellerSlice> = (set) =>({
           }));        
       }
     },
+    saveAllFavorites:async(payload:any) =>{
+      try {
+          set((state) => ({
+            ...state,
+            traveller: {
+              ...state.traveller,
+              favorites:payload,
+              loading: false,
+              responseMsg: '',
+            },
+          }));          
+      } catch (error) {
+          console.log('Error at: ', error);
+          set((state) => ({
+            ...state,
+            traveller: {
+              ...state.traveller,
+              favorites: null,
+              loading: false,
+              responseMsg: 'Invalid Credentials',
+            },
+          }));        
+      }
+    },
+    saveAllBooking:async(payload:any) =>{
+      const allData = payload?.map((item: any,idx: number) => ({...item,NoID:idx+1}))
+      try {
+          set((state) => ({
+            ...state,
+            traveller: {
+              ...state.traveller,
+              booking:allData,
+              loading: false,
+              responseMsg: '',
+            },
+          }));          
+      } catch (error) {
+          console.log('Error at: ', error);
+          set((state) => ({
+            ...state,
+            traveller: {
+              ...state.traveller,
+              booking: null,
+              loading: false,
+              responseMsg: 'Invalid Credentials',
+            },
+          }));        
+      }
+    },
+    saveAllItinerary:async(payload) =>{
+      const allData = payload?.map((item: any,idx: number) => ({...item,NoID:idx+1}))
+      try {
+          set((state) => ({
+            ...state,
+            traveller: {
+              ...state.traveller,
+              itinerary:allData,
+              loading: false,
+              responseMsg: '',
+            },
+          }));          
+      } catch (error) {
+          console.log('Error at: ', error);
+          set((state) => ({
+            ...state,
+            traveller: {
+              ...state.traveller,
+              itinerary: null,
+              loading: false,
+              responseMsg: 'Invalid Credentials',
+            },
+          }));        
+      }      
+    }
 })
 
 export default createTravellerSlice

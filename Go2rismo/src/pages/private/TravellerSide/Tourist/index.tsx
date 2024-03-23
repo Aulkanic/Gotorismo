@@ -1,21 +1,30 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import useStore from '../../../../zustand/store/store';
-import { saveAllPost, selector } from '../../../../zustand/store/store.provide';
-import { Avatar, Button, Form, Image, List, Rate, notification } from 'antd';
+import { saveAllFavorites, saveAllPost, selector } from '../../../../zustand/store/store.provide';
+import { Avatar, Button, Form, Image, List, Rate, notification,Modal,DatePicker,InputNumber } from 'antd';
 import { CustomButton } from '../../../../components/Button/CustomButton';
 import TextArea from 'antd/es/input/TextArea';
 import { updateData } from '../../../../hooks/useUpdateData';
 import { T_Reviews } from '../../../../types';
-import { fetchData } from '../../../../hooks/useFetchData';
+import { fetchData, fetchDataCondition } from '../../../../hooks/useFetchData';
+import { AddToFavorites } from '../../../../config/addFavorites';
+import { FaHeart } from "react-icons/fa";
+import { CalculateRating } from '../../../../config/calculateRate';
+import { addData } from '../../../../hooks/useAddData';
 
 export default function TouristSelected() {
     const { type,name } = useParams();
+    const [open, setOpen] = useState(false);
+    const [confirmLoading, setConfirmLoading] = useState(false);
     const [form] = Form.useForm();
+    const { RangePicker } = DatePicker;
     const [isOpen,setIsOpen] = useState(false);
     const [isLoading,setIsLoading] = useState(false)
     const [initLoading, setInitLoading] = useState(true);
+    const [favsLoading,setFavLoading] = useState(false)
     const [loading, setLoading] = useState(false);
     const [list, setList] = useState<T_Reviews[]>([]);
     const allPost = useStore(selector('traveller'))
@@ -25,16 +34,22 @@ export default function TouristSelected() {
     async function Fetch(){
       setInitLoading(true);
       const response = await fetchData('tbl_postList')
+      const res = await fetchDataCondition('tbl_favorites',[{ field: "travellerId", operator: "==", value: allPost.info.id }])
+      saveAllFavorites(res)
       saveAllPost(response)
       setInitLoading(false);
     }
+
+    useEffect(() =>{
+      Fetch()
+    },[])
     
     useEffect(() =>{
       setInitLoading(true)
       const data1 = details[0]?.reviews?.map((item:any) => ({...item,loading:false}))
       setList(data1?.slice(0, countPerPage))
       setInitLoading(false)
-    },[details])
+    },[])
   
     const onLoadMore = () => {
       setLoading(true);
@@ -91,6 +106,67 @@ export default function TouristSelected() {
         setIsLoading(false)
       }
     } 
+    const handleAddFavorites = async() =>{
+      setFavLoading(true)
+      if(details.length === 0 || !allPost.info){
+        notification.error({
+          message: "No Post selected"
+        })
+        return
+      }
+      await AddToFavorites(details[0],allPost.info)
+      setFavLoading(false)
+      notification.success({
+        message:'Added to your  favorite list'
+      })
+    }
+
+    const showModal = () => {
+      setOpen(true);
+    };
+  
+    const handleBook = async(values:any) => {
+      try {
+        
+        setConfirmLoading(true)
+        const checkInDate = new Date(values.inout[0]).toLocaleString();
+        const checkOutDate = new Date(values.inout[1]).toLocaleString();
+        if(!checkInDate  || !checkOutDate){
+          throw Error("Please input valid date")
+        }
+        const dataToSend = {
+          checkIn: checkInDate,
+          checkOut: checkOutDate,
+          childNumber: Number(values.child),
+          adults: Number(values.adult),
+          roomTotal: Number(values.room),
+          travellerInfo:allPost.info,
+          travellerId:allPost.info.id,
+          dateBooked:new Date(Date.now()).toLocaleString(),
+          status:'Pending',
+          hotelresortDetails:details[0]
+        };
+        await addData('tbl_booking',dataToSend)
+        setConfirmLoading(false)
+        notification.success({
+          message: 'Your booking has been submitted successfully!'
+        })
+        setOpen(false)
+        form.resetFields()
+        
+      } catch (error) {
+        console.error('Failed to submit form:', error);
+        // Handle errors if necessary
+      }
+    };
+  
+    const handleCancel = () => {
+      console.log('Clicked cancel button');
+      setOpen(false);
+    };
+    console.log(details.type)
+    const rating = details[0].reviews ? CalculateRating(details[0].reviews) : 0;
+    const favs = allPost.favorites ? allPost.favorites?.map((item:any)=> item.favorites[0].id) || [] : null
   return (
     <div className='pt-8 flex flex-nowrap'>
       <div className='pl-8 w-1/2'>
@@ -100,25 +176,42 @@ export default function TouristSelected() {
             <Image width={700} height={400} className='rounded-lg' src={details[0].photos[0]} alt="" />
           </div>
         </div>
-        <div>
+        <div className='mt-2'>
           <div className='w-full flex justify-between'>
             <h1 className='text-3xl'>{name}</h1>
-            <CustomButton
-              children='Add to Favorites'
-              classes='bg-sky-600 text-white'
-            />
+            <div className='flex gap-4'>
+              <div>
+              {(favs && favs?.find((item:any) => item === details[0].id)) ? <CustomButton
+                children={<div className='flex items-center gap-2 '><FaHeart /> <p>Favorites</p></div>}
+                classes='bg-sky-600 text-white w-max px-4'
+              /> : (
+                <CustomButton
+                children={'Add to Favorites'}
+                classes='bg-sky-600 text-white w-max px-4'
+                loading={favsLoading}
+                onClick={()=>{handleAddFavorites()}}
+              />              
+              )}
+              </div>
+              <div>
+                {(details[0]?.type !== 'Food & Restaurant' || details[0]?.type !== 'Tourist Spots') && <CustomButton
+                  children="Book Now"
+                  onClick={showModal}
+                />}
+              </div>
+            </div>
+
           </div>
           <div>
-          <Rate allowHalf defaultValue={2.5} />
+          <Rate allowHalf defaultValue={rating} />
           </div>
         </div>
         <div>
-
         </div>
       </div>
       <div className='p-8 flex flex-col gap-8'>
         <div className='w-full h-60 p-4 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]'>
-          <h1>Description</h1>
+          <h1 className='font-semibold'>Description</h1>
           <p>{details[0].description}</p>
         </div>
         <div className='px-4 py-2 w-full h-max shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]'>
@@ -183,6 +276,40 @@ export default function TouristSelected() {
           </div>
         </div>
       </div>
+      <Modal
+        title="Booking"
+        open={open}
+        onCancel={handleCancel}
+        footer={null}
+      >
+      <Form
+        name="basic"
+        layout='vertical'
+        form={form}
+        onFinish={handleBook}
+      >
+      <Form.Item name='inout' label='Check In - Check Out:'>
+      <RangePicker style={{ width: '100%' }} showTime />
+      </Form.Item>
+      <Form.Item name='room' label='No. of Rooms'>
+      <InputNumber min={1} style={{ width: '100%' }} />
+      </Form.Item>
+      <Form.Item name='adult' label='No. of Adults'>
+      <InputNumber min={1} style={{ width: '100%' }} />
+      </Form.Item>
+      <Form.Item name='child' label='No. of Children'>
+      <InputNumber min={1} style={{ width: '100%' }} />
+      </Form.Item>
+      <Form.Item className='w-full flex justify-end items-end'>
+        <CustomButton
+          children='Book Now!'
+          htmlType='submit'
+          loading={confirmLoading}
+        />
+      </Form.Item>
+      </Form>
+
+      </Modal>
     </div>
   )
 }

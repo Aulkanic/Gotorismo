@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
-import { Button, Image, Input, List } from "antd";
+import { Button, Image, List } from "antd";
 import { fetchData } from "../../../../hooks/useFetchData";
 import useStore from "../../../../zustand/store/store";
 import { saveAllEvents, saveAllPostBusiness, selector } from "../../../../zustand/store/store.provide";
@@ -12,7 +12,6 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import './styles.css';
 
-const  { Search } = Input
 export const BusinessDashboard = () => {
   const countPerPage = 1;
   const allPost = useStore(selector('business'))
@@ -63,14 +62,8 @@ export const BusinessDashboard = () => {
   return (
     <div className='flex flex-nowrap'>
       <div className='w-[1100px]'>
-        <div className='p-4 w-96'> 
-        <Search
-        allowClear 
-        placeholder="input search text" 
-        size="large" 
-        />
-        </div>
-        <div className='px-8 flex flex-col'>
+
+        <div className='px-8 flex flex-col pt-8'>
           <div>
             <h1 className='font-bold text-3xl'>Tourist Spots</h1>
             <div className='w-[980px] p-4'>

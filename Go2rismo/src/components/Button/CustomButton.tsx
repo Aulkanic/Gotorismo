@@ -6,7 +6,7 @@ import clsx from 'clsx';
 
 interface IBtnProps {
     children: React.ReactNode;
-    onClick?: () => void;
+    onClick?: React.MouseEventHandler<HTMLElement>;
     classes?: string;
     type?: ButtonType;
     htmlType?: 'button' | 'submit' | 'reset';

@@ -22,7 +22,12 @@ export const{
     saveAllEventsForTraveller,
     saveAllPostBusiness,
     saveAllEventsAdmin,
-    saveAllPostAdmin
+    saveAllPostAdmin,
+    saveAllFavorites,
+    saveAllBooking,
+    saveAllBookingForBusiness,
+    saveAllItinerary,
+    saveAllBookingAdmin
 } = storeProvider
 
 export { selector, storeProvider };

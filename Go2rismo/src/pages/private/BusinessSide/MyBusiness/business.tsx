@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react'
-import {  Form, Input,Select,Upload, notification,Button, Image, Flex, RadioChangeEvent, List, Skeleton } from 'antd';
+import {  Form, Input,Select,Upload, notification,Button, Image, Flex, RadioChangeEvent, List, Skeleton, Rate } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { CustomButton } from '../../../../components/Button/CustomButton';
 import { uploadImageToStorage } from '../../../../config/uploadFile';
@@ -17,11 +17,13 @@ type FieldType = {
   type?: string;
   description?: string;
   photos?: string;
+  price?:number;
 };
 const { TextArea } = Input;
 
 export const MyBusiness = () => {
   const [form] = Form.useForm();
+  const typeSelected = Form.useWatch('type',form)
   const business = useStore(selector('business'))
   const [initLoading, setInitLoading] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -53,10 +55,25 @@ export const MyBusiness = () => {
             return upload
         })
         const imageUrl = await Promise.all(uploading)
-        const dataToSend = {
+        const dataToSend = typeSelected === 'Food/Restaurant' ? {
+          name:values.name,
+          type:values.type,
+          description:values.description,
+          price:values.price,
+          businessId:business.info.id,
+          photos:imageUrl
+      } : typeSelected === 'Tourist Spots' ? {
+        name:values.name,
+        location: values.location,
+        type:values.type,
+        description:values.description,
+        businessId:business.info.id,
+        photos:imageUrl
+    } : {
             name:values.name,
             location: values.location,
             type:values.type,
+            price:values.price,
             description:values.description,
             businessId:business.info.id,
             photos:imageUrl
@@ -93,7 +110,6 @@ export const MyBusiness = () => {
       }     
 
   } catch (error) {
-      console.log(error)
       api.error({
           message:'Form Submission',
           description: 'Failed to submit form. Please try again later.',
@@ -180,7 +196,8 @@ export const MyBusiness = () => {
       <Button onClick={onLoadMore1}>Load more</Button>
     </div>
   ) : null;
-  console.log(list)
+
+  
   return (
     <div className='flex flex-wrap'>
       <div className='p-4 w-[600px]'>
@@ -209,22 +226,6 @@ export const MyBusiness = () => {
           {act === 'Business' ? <div className='flex gap-2 w-full flex-wrap'>
               <div className='flex-1'>
               <Form.Item<FieldType>
-              label="Name"
-              name="name"
-              className='mb-2'
-              rules={[{ required: true, message: 'Please provide name!' }]}
-              >
-              <Input />
-              </Form.Item>
-              <Form.Item<FieldType>
-              label="Location"
-              name="location"
-              className='mb-2'
-              rules={[{ required: true, message: 'Please provide location!' }]}
-              >
-              <Input />
-              </Form.Item>
-              <Form.Item<FieldType>
               label="Type:"
               name="type"
               className='mb-2'
@@ -237,9 +238,33 @@ export const MyBusiness = () => {
                     <Select.Option value="Beach Resorts">Beach Resorts</Select.Option>
                     <Select.Option value="Hotel & Rooms">Hotel & Rooms</Select.Option>
                     <Select.Option value="Tourist Spots">Tourist Spots</Select.Option>
-                    <Select.Option value="Food/Restaurant">Food/Restaurant</Select.Option>
+                    <Select.Option value="Food & Restaurant">Food/Restaurant</Select.Option>
                 </Select>
               </Form.Item>
+              <Form.Item<FieldType>
+              label="Name"
+              name="name"
+              className='mb-2'
+              rules={[{ required: true, message: 'Please provide name!' }]}
+              >
+              <Input />
+              </Form.Item>
+              {typeSelected !== 'Food/Restaurant' && <Form.Item<FieldType>
+              label="Location"
+              name="location"
+              className='mb-2'
+              rules={[{ required: true, message: 'Please provide location!' }]}
+              >
+              <Input />
+              </Form.Item>}
+              {typeSelected !== 'Tourist Spots' && <Form.Item<FieldType>
+              label="Price"
+              name="price"
+              className='mb-2'
+              rules={[{ required: true, message: 'Please provide price!' }]}
+              >
+              <Input />
+              </Form.Item>}
               <Form.Item<FieldType>
               label="Description"
               name="description"
@@ -304,12 +329,24 @@ export const MyBusiness = () => {
         itemLayout="horizontal"
         loadMore={loadMore}
         dataSource={list}
-        renderItem={(item:any,idx:number) => (
+        renderItem={(item:any,idx:number) => {
+          const allreview = item.reviews ? item.reviews : [];
+          let totalRating = 0;
+          let sumOfRating = 0;
+          allreview.forEach((element:{reviewRate:number}) => {
+            sumOfRating += element.reviewRate;
+            totalRating++;
+          });
+          const reviewRate = sumOfRating /  totalRating;
+          return(
           <List.Item>
             <Skeleton avatar title={false} loading={item.loading} active>
             <div key={idx} className='bg-white p-4 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]'>
-                    <div className='flex justify-between'>
+                    <div className='flex justify-between mb-2'>
+                    <div className='flex gap-2'>
                     <h3 className='font-bold text-lg'>{item.name}</h3>
+                    <Rate value={reviewRate} allowHalf/>
+                    </div>
                     <p className='text-lg font-semibold italic'>{item.location}</p>
                     </div>
                     <div className='flex gap-4'>
@@ -331,7 +368,7 @@ export const MyBusiness = () => {
                   </div>
             </Skeleton>
           </List.Item>
-        )} /> : (
+        )}} /> : (
           <List
           className="demo-loadmore-list"
           loading={initLoading}

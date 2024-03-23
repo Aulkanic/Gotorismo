@@ -13,6 +13,7 @@ interface BusinessState {
     businessList?: any;
     businessType?:any;
     allPost?:any;
+    booking?:any;
     events?:any;
     responseMsg?:string;
 }
@@ -25,6 +26,7 @@ export interface BusinessSlice{
     saveAllBusinessForBusinessMan:(payload:any) => void;
     saveAllEvents:(payload:any) => void;
     saveAllPostBusiness:(payload:any) => void;
+    saveAllBookingForBusiness:(paylaod:any) =>void;
 }
 
 const initialState: BusinessState ={
@@ -131,7 +133,7 @@ const createBusinessSlice: StateCreator<BusinessSlice> = (set) =>({
                 hotelRoom:payload?.filter((item: { type: string; }) => item.type === 'Hotel & Rooms'),
                 beachResorts:payload?.filter((item: { type: string; }) => item.type === 'Beach Resorts'),
                 touristSpots:payload?.filter((item: { type: string; }) => item.type === 'Tourist Spots'),
-                foodRestaurant:payload?.filter((item: { type: string; }) => item.type === 'Food/Restaurant'),
+                foodRestaurant:payload?.filter((item: { type: string; }) => item.type === 'Food & Restaurant'),
               },
               loading: false,
               responseMsg: '',
@@ -198,6 +200,31 @@ const createBusinessSlice: StateCreator<BusinessSlice> = (set) =>({
             business: {
               ...state.business,
               businessType: [],
+              loading: false,
+              responseMsg: 'Invalid Credentials',
+            },
+          }));        
+      }
+    },
+    saveAllBookingForBusiness:async(payload:any) =>{
+      const allData = payload?.map((item: any,idx: number) => ({...item,NoID:idx+1}))
+      try {
+          set((state) => ({
+            ...state,
+            business: {
+              ...state.business,
+              booking:allData,
+              loading: false,
+              responseMsg: '',
+            },
+          }));          
+      } catch (error) {
+          console.log('Error at: ', error);
+          set((state) => ({
+            ...state,
+            business: {
+              ...state.business,
+              booking: null,
               loading: false,
               responseMsg: 'Invalid Credentials',
             },
