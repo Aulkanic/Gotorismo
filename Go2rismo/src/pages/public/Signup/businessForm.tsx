@@ -182,12 +182,68 @@ export const BusinessFrm = () => {
                 label="Location"
                 name="location"
                 className='mb-0'
-                rules={[{ required: true, message: 'Please input your Business Location!' }]}
+                rules={[{ required: true, message: 'Please select your Business Location!' }]}
                 >
-                <Input />
+                <Select 
+                mode="multiple"
+                allowClear
+                >
+                    <Select.Option value="">-select location-</Select.Option>
+                    <Select.Option value="Alcantara">Alcantara</Select.Option>
+                    <Select.Option value="Alcoy">Alcoy</Select.Option>
+                    <Select.Option value="Alegria">Alegria</Select.Option>
+                    <Select.Option value="Aloguinsan">Aloguinsan</Select.Option>
+                    <Select.Option value="Argao">Argao</Select.Option>
+                    <Select.Option value="Asturias">Asturias</Select.Option>
+                    <Select.Option value="Badian">Badian</Select.Option>
+                    <Select.Option value="Balamban">Balamban</Select.Option>
+                    <Select.Option value="Bantayan">Bantayan</Select.Option>
+                    <Select.Option value="Barili">Barili</Select.Option>
+                    <Select.Option value="Bogo City">Bogo City</Select.Option>
+                    <Select.Option value="Boljoon">Boljoon</Select.Option>
+                    <Select.Option value="Borbon">BorbonBorbon</Select.Option>
+                    <Select.Option value="Carmen">CarmenCarmen</Select.Option>
+                    <Select.Option value="Catmon">Catmon</Select.Option>
+                    <Select.Option value="Compostela">Compostela</Select.Option>
+                    <Select.Option value="Consolacion">Consolacion</Select.Option>
+                    <Select.Option value="Cordova">Cordova</Select.Option>
+                    <Select.Option value="Daanbantayan">Daanbantayan</Select.Option>
+                    <Select.Option value="Danao City">Danao City</Select.Option>
+                    <Select.Option value="Dalaguete">Dalaguete</Select.Option>
+                    <Select.Option value="Dumanjug">Dumanjug</Select.Option>
+                    <Select.Option value="Ginatilan">Ginatilan</Select.Option>
+                    <Select.Option value="Lapu-Lapu City">Lapu-Lapu City</Select.Option>
+                    <Select.Option value="Liloan">Liloan</Select.Option>
+                    <Select.Option value="Madridejos">Madridejos</Select.Option>
+                    <Select.Option value="Mandaue City">Mandaue City</Select.Option>
+                    <Select.Option value="Malabuyoc">Malabuyoc</Select.Option>
+                    <Select.Option value="Medellin">Medellin</Select.Option>
+                    <Select.Option value="Minglanilla">Minglanilla</Select.Option>
+                    <Select.Option value="Moalboal">Moalboal</Select.Option>
+                    <Select.Option value="Naga City">Naga City</Select.Option>
+                    <Select.Option value="Oslob">Oslob</Select.Option>
+                    <Select.Option value="Pilar">Pilar</Select.Option>
+                    <Select.Option value="Pinamungajan">Pinamungajan</Select.Option>
+                    <Select.Option value="Poro">Poro</Select.Option>
+                    <Select.Option value="Ronda">Ronda</Select.Option>
+                    <Select.Option value="Samboan">Samboan</Select.Option>
+                    <Select.Option value="San Fernando">San Fernando</Select.Option>
+                    <Select.Option value="San Francisco">San Francisco</Select.Option>
+                    <Select.Option value="San Remigio">San Remigio</Select.Option>
+                    <Select.Option value="Santa Fe">Santa Fe</Select.Option>
+                    <Select.Option value="Santander">Santander</Select.Option>
+                    <Select.Option value="Sibonga">Sibonga</Select.Option>
+                    <Select.Option value="Sogod">Sogod</Select.Option>
+                    <Select.Option value="Tabogon">Tabogon</Select.Option>
+                    <Select.Option value="Tabuelan">Tabuelan</Select.Option>
+                    <Select.Option value="Talisay City">Talisay City</Select.Option>
+                    <Select.Option value="Toledo City">Toledo City</Select.Option>
+                    <Select.Option value="Tuburan">Tuburan</Select.Option>
+                    <Select.Option value="Tudela">Tudela</Select.Option>
+                </Select>
                 </Form.Item>
                 <Form.Item<FieldType> 
-                label="Select Business Type"
+                label="Business Type"
                 name='businessType'
                 className='w-full mt-2'
                 rules={[{ required: true, message: 'Please select your business type first!' }]}

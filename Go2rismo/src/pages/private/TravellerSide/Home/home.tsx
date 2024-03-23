@@ -67,7 +67,6 @@ export const TravelDashboard = () => {
     })
     setSearchQuery(res);
   }, [allPost.post]);
-  console.log(searchQuery)
   return (
     <div className='flex flex-nowrap'>
       <div className='w-[1100px]'>
@@ -84,7 +83,7 @@ export const TravelDashboard = () => {
           <div>
             <h1 className='font-bold text-3xl'>Beach & Resorts</h1>
             <div className='w-[980px] p-4'>
-            {allPost?.businessType.beachResorts.length > 0 ? <Swiper
+            {allPost?.businessType?.beachResorts?.length > 0 ? <Swiper
               ref={swiperRef}
               slidesPerView={4}
               spaceBetween={0}
@@ -92,7 +91,7 @@ export const TravelDashboard = () => {
               modules={[Pagination, Navigation]}
               className=''
             >
-             {allPost?.businessType.beachResorts?.map((item:any,idx:number) =>(
+             {allPost?.businessType?.beachResorts?.map((item:any,idx:number) =>(
               <SwiperSlide className=''>
                 <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
                 <div className='relative'>
@@ -111,7 +110,7 @@ export const TravelDashboard = () => {
           <div>
             <h1 className='font-bold text-3xl'>Hotel and Room</h1>
             <div className='w-[980px] p-4'>
-            {allPost?.businessType.hotelRoom.length > 0 ? <Swiper
+            {allPost?.businessType?.hotelRoom?.length > 0 ? <Swiper
               ref={swiperRef}
               slidesPerView={4}
               spaceBetween={0}
@@ -119,7 +118,7 @@ export const TravelDashboard = () => {
               modules={[Pagination, Navigation]}
               className=''
             >
-             {allPost?.businessType.hotelRoom?.map((item:any,idx:number) =>(
+             {allPost?.businessType?.hotelRoom?.map((item:any,idx:number) =>(
               <SwiperSlide className=''>
                 <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
                 <div className='relative'>
@@ -138,7 +137,7 @@ export const TravelDashboard = () => {
           <div>
             <h1 className='font-bold text-3xl'>Foods and Restaurant</h1>
             <div className='w-[980px] p-4'>
-            {allPost?.businessType.foodRestaurant.length > 0 ? <Swiper
+            {allPost?.businessType?.foodRestaurant?.length > 0 ? <Swiper
               ref={swiperRef}
               slidesPerView={4}
               spaceBetween={0}
@@ -146,7 +145,7 @@ export const TravelDashboard = () => {
               modules={[Pagination, Navigation]}
               className=''
             >
-             {allPost?.businessType.foodRestaurant?.map((item:any,idx:number) =>(
+             {allPost?.businessType?.foodRestaurant?.map((item:any,idx:number) =>(
               <SwiperSlide className=''>
                 <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
                 <div className='relative'>
@@ -165,7 +164,7 @@ export const TravelDashboard = () => {
           <div>
             <h1 className='font-bold text-3xl'>Tourist Spots</h1>
             <div className='w-[980px] p-4'>
-            {allPost?.businessType.touristSpots.length > 0 ? <Swiper
+            {allPost?.businessType?.touristSpots?.length > 0 ? <Swiper
               ref={swiperRef}
               slidesPerView={4}
               spaceBetween={0}
@@ -173,7 +172,7 @@ export const TravelDashboard = () => {
               modules={[Pagination, Navigation]}
               className=''
             >
-             {allPost?.businessType.touristSpots?.map((item:any,idx:number) =>(
+             {allPost?.businessType?.touristSpots?.map((item:any,idx:number) =>(
               <SwiperSlide className=''>
                 <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
                 <div className='relative'>

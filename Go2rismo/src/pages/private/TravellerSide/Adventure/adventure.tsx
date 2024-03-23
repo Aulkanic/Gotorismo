@@ -21,7 +21,7 @@ export const TravelAdventure = () => {
     Fetch()
    },[])
 
-   const travels =traveller.itinerary[0] && traveller.itinerary[0].itinerary.length > 0 ? traveller.itinerary[0].itinerary : []
+   const travels =traveller?.itinerary?.length > 0 && traveller?.itinerary[0]?.itinerary?.length > 0 ? traveller?.itinerary[0]?.itinerary : []
   return (
     <div className='px-16 py-8'>
       <div className='w-[100%]'>
@@ -34,7 +34,7 @@ export const TravelAdventure = () => {
         />
         </div>
       <Timeline >
-        {travels.map((item: any, index: string | number | bigint | undefined) => (
+        {travels?.map((item: any, index: string | number | bigint | undefined) => (
           <Timeline.Item
             key={index}
             dot={item.dot ? <ClockCircleOutlined style={{ fontSize: '16px' }} /> : null}

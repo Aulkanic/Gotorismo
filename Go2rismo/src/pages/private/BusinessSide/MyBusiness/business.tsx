@@ -14,6 +14,7 @@ import { T_Business, T_Events } from '../../../../types';
 type FieldType = {
   name?: string;
   location?: string;
+  address?:string;
   type?: string;
   description?: string;
   photos?: string;
@@ -197,6 +198,21 @@ export const MyBusiness = () => {
     </div>
   ) : null;
 
+  const validateLocation = (_rule: any, value: string, callback: any) => {
+    if (!value) {
+      callback('Please select a location!');
+      return;
+    }
+    // Extracting all option values from the Select component
+    const optionValues = ['Alcantara', 'Alcoy', 'Alegria', 'Aloguinsan', 'Argao', 'Asturias', 'Badian', 'Balamban', 'Bantayan', 'Barili', 'Bogo City', 'Boljoon', 'Borbon', 'Carmen', 'Catmon', 'Compostela', 'Consolacion', 'Cordova', 'Daanbantayan', 'Danao City', 'Dalaguete', 'Dumanjug', 'Ginatilan', 'Lapu-Lapu City', 'Liloan', 'Madridejos', 'Mandaue City', 'Malabuyoc', 'Medellin', 'Minglanilla', 'Moalboal', 'Naga City', 'Oslob', 'Pilar', 'Pinamungajan', 'Poro', 'Ronda', 'Samboan', 'San Fernando', 'San Francisco', 'San Remigio', 'Santa Fe', 'Santander', 'Sibonga', 'Sogod', 'Tabogon', 'Tabuelan', 'Talisay City', 'Toledo City', 'Tuburan', 'Tudela'];
+    // Checking if the selected value exists in the option values
+    if (optionValues.includes(value)) {
+      callback();
+    } else {
+      callback('Please select a valid location!');
+    }
+  };
+
   
   return (
     <div className='flex flex-wrap'>
@@ -238,7 +254,7 @@ export const MyBusiness = () => {
                     <Select.Option value="Beach Resorts">Beach Resorts</Select.Option>
                     <Select.Option value="Hotel & Rooms">Hotel & Rooms</Select.Option>
                     <Select.Option value="Tourist Spots">Tourist Spots</Select.Option>
-                    <Select.Option value="Food & Restaurant">Food/Restaurant</Select.Option>
+                    <Select.Option value="Food & Restaurant">Food & Restaurant</Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item<FieldType>
@@ -249,14 +265,82 @@ export const MyBusiness = () => {
               >
               <Input />
               </Form.Item>
-              {typeSelected !== 'Food/Restaurant' && <Form.Item<FieldType>
+              {typeSelected !== 'Food & Restaurant' && 
+              <div>
+              <Form.Item<FieldType>
+              label="Address"
+              name="address"
+              className='mb-2'
+              rules={[{ required: true, message: 'Please provide address!' }]}
+              >
+              <Input />
+              </Form.Item>
+              <Form.Item<FieldType>
               label="Location"
               name="location"
               className='mb-2'
-              rules={[{ required: true, message: 'Please provide location!' }]}
+              rules={[{ required: true, message: 'Please provide location!', validator: validateLocation }]}
               >
-              <Input />
-              </Form.Item>}
+                <Select 
+                mode="multiple"
+                allowClear
+                >
+                    <Select.Option value="">-select location-</Select.Option>
+                    <Select.Option value="Alcantara">Alcantara</Select.Option>
+                    <Select.Option value="Alcoy">Alcoy</Select.Option>
+                    <Select.Option value="Alegria">Alegria</Select.Option>
+                    <Select.Option value="Aloguinsan">Aloguinsan</Select.Option>
+                    <Select.Option value="Argao">Argao</Select.Option>
+                    <Select.Option value="Asturias">Asturias</Select.Option>
+                    <Select.Option value="Badian">Badian</Select.Option>
+                    <Select.Option value="Balamban">Balamban</Select.Option>
+                    <Select.Option value="Bantayan">Bantayan</Select.Option>
+                    <Select.Option value="Barili">Barili</Select.Option>
+                    <Select.Option value="Bogo City">Bogo City</Select.Option>
+                    <Select.Option value="Boljoon">Boljoon</Select.Option>
+                    <Select.Option value="Borbon">BorbonBorbon</Select.Option>
+                    <Select.Option value="Carmen">CarmenCarmen</Select.Option>
+                    <Select.Option value="Catmon">Catmon</Select.Option>
+                    <Select.Option value="Compostela">Compostela</Select.Option>
+                    <Select.Option value="Consolacion">Consolacion</Select.Option>
+                    <Select.Option value="Cordova">Cordova</Select.Option>
+                    <Select.Option value="Daanbantayan">Daanbantayan</Select.Option>
+                    <Select.Option value="Danao City">Danao City</Select.Option>
+                    <Select.Option value="Dalaguete">Dalaguete</Select.Option>
+                    <Select.Option value="Dumanjug">Dumanjug</Select.Option>
+                    <Select.Option value="Ginatilan">Ginatilan</Select.Option>
+                    <Select.Option value="Lapu-Lapu City">Lapu-Lapu City</Select.Option>
+                    <Select.Option value="Liloan">Liloan</Select.Option>
+                    <Select.Option value="Madridejos">Madridejos</Select.Option>
+                    <Select.Option value="Mandaue City">Mandaue City</Select.Option>
+                    <Select.Option value="Malabuyoc">Malabuyoc</Select.Option>
+                    <Select.Option value="Medellin">Medellin</Select.Option>
+                    <Select.Option value="Minglanilla">Minglanilla</Select.Option>
+                    <Select.Option value="Moalboal">Moalboal</Select.Option>
+                    <Select.Option value="Naga City">Naga City</Select.Option>
+                    <Select.Option value="Oslob">Oslob</Select.Option>
+                    <Select.Option value="Pilar">Pilar</Select.Option>
+                    <Select.Option value="Pinamungajan">Pinamungajan</Select.Option>
+                    <Select.Option value="Poro">Poro</Select.Option>
+                    <Select.Option value="Ronda">Ronda</Select.Option>
+                    <Select.Option value="Samboan">Samboan</Select.Option>
+                    <Select.Option value="San Fernando">San Fernando</Select.Option>
+                    <Select.Option value="San Francisco">San Francisco</Select.Option>
+                    <Select.Option value="San Remigio">San Remigio</Select.Option>
+                    <Select.Option value="Santa Fe">Santa Fe</Select.Option>
+                    <Select.Option value="Santander">Santander</Select.Option>
+                    <Select.Option value="Sibonga">Sibonga</Select.Option>
+                    <Select.Option value="Sogod">Sogod</Select.Option>
+                    <Select.Option value="Tabogon">Tabogon</Select.Option>
+                    <Select.Option value="Tabuelan">Tabuelan</Select.Option>
+                    <Select.Option value="Talisay City">Talisay City</Select.Option>
+                    <Select.Option value="Toledo City">Toledo City</Select.Option>
+                    <Select.Option value="Tuburan">Tuburan</Select.Option>
+                    <Select.Option value="Tudela">Tudela</Select.Option>
+                </Select>
+              </Form.Item>
+              </div>
+              }
               {typeSelected !== 'Tourist Spots' && <Form.Item<FieldType>
               label="Price"
               name="price"
