@@ -23,6 +23,7 @@ export default function Private(){
     {id:0,name:'Home',url:RouterUrl.ADMINSIDE},
     {id:1,name:'Booking',url:RouterUrl.ADMINBOOKING},
     {id:2,name:'Accounts',url:RouterUrl.ADMINACCOUNTS},
+    {id:3,name:'Posts',url:RouterUrl.ADMINTRAVELTALK},
     {id:4,name:'Admin',url:RouterUrl.ADMINPROFILE},
   ] : [
     {id:0,name:'Home',url:RouterUrl.BUSINESSSIDE},

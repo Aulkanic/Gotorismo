@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react'
-import {  Form, Input,Select,Upload, notification,Button, Image, Flex, RadioChangeEvent, List, Skeleton, Rate } from 'antd';
+import {  Form, Input,Select,Upload, notification,Button, Image, Flex, RadioChangeEvent, List, Skeleton, Rate, Popconfirm } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { CustomButton } from '../../../../components/Button/CustomButton';
 import { uploadImageToStorage } from '../../../../config/uploadFile';
@@ -10,6 +10,7 @@ import { fetchData } from '../../../../hooks/useFetchData';
 import { addData } from '../../../../hooks/useAddData';
 import CustomRadio from '../../../../components/radio/customRadio';
 import { T_Business, T_Events } from '../../../../types';
+import { updateData } from '../../../../hooks/useUpdateData';
 
 type FieldType = {
   name?: string;
@@ -29,6 +30,7 @@ export const MyBusiness = () => {
   const [initLoading, setInitLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [deleting,setDeleting] = useState(false)
   const [act,setAct] = useState('')
   const [post,setPost] = useState('')
   const [list, setList] = useState<T_Business[]>([]);
@@ -56,20 +58,15 @@ export const MyBusiness = () => {
             return upload
         })
         const imageUrl = await Promise.all(uploading)
-        const dataToSend = typeSelected === 'Food/Restaurant' ? {
-          name:values.name,
-          type:values.type,
-          description:values.description,
-          price:values.price,
-          businessId:business.info.id,
-          photos:imageUrl
-      } : typeSelected === 'Tourist Spots' ? {
+        const dataToSend = typeSelected === 'Tourist Spots' ? {
         name:values.name,
         location: values.location,
         type:values.type,
         description:values.description,
         businessId:business.info.id,
-        photos:imageUrl
+        photos:imageUrl,
+        address: values.address,
+        isDeleted:false
     } : {
             name:values.name,
             location: values.location,
@@ -77,7 +74,9 @@ export const MyBusiness = () => {
             price:values.price,
             description:values.description,
             businessId:business.info.id,
-            photos:imageUrl
+            address: values.address,
+            photos:imageUrl,
+            isDeleted:false
         }
         const response = await addData('tbl_postList',dataToSend)
         if(response){
@@ -139,6 +138,7 @@ export const MyBusiness = () => {
     setInitLoading(true)
     const response = await fetchData('tbl_postList')
     const res = await fetchData('tbl_announcements&Events')
+    response.shift()
     if(response && res){
       fetchBusiness(response)
       saveAllEvents(res)
@@ -212,7 +212,13 @@ export const MyBusiness = () => {
       callback('Please select a valid location!');
     }
   };
-
+  const deletePost = async(data:any) =>{
+    setDeleting(true)
+    await updateData('tbl_postList',data.id,{isDeleted:true})
+    Fetch()
+    setDeleting(false)
+  }
+  console.log(list)
   
   return (
     <div className='flex flex-wrap'>
@@ -265,7 +271,6 @@ export const MyBusiness = () => {
               >
               <Input />
               </Form.Item>
-              {typeSelected !== 'Food & Restaurant' && 
               <div>
               <Form.Item<FieldType>
               label="Address"
@@ -282,8 +287,6 @@ export const MyBusiness = () => {
               rules={[{ required: true, message: 'Please provide location!', validator: validateLocation }]}
               >
                 <Select 
-                mode="multiple"
-                allowClear
                 >
                     <Select.Option value="">-select location-</Select.Option>
                     <Select.Option value="Alcantara">Alcantara</Select.Option>
@@ -340,7 +343,6 @@ export const MyBusiness = () => {
                 </Select>
               </Form.Item>
               </div>
-              }
               {typeSelected !== 'Tourist Spots' && <Form.Item<FieldType>
               label="Price"
               name="price"
@@ -425,13 +427,32 @@ export const MyBusiness = () => {
           return(
           <List.Item>
             <Skeleton avatar title={false} loading={item.loading} active>
-            <div key={idx} className='bg-white p-4 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]'>
+            <div key={idx} className='min-w-[650px] bg-white p-4 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]'>
                     <div className='flex justify-between mb-2'>
-                    <div className='flex gap-2'>
+                    <div className='flex justify-between w-full'>
+                    <div>
                     <h3 className='font-bold text-lg'>{item.name}</h3>
                     <Rate value={reviewRate} allowHalf/>
                     </div>
-                    <p className='text-lg font-semibold italic'>{item.location}</p>
+                    <div>
+                    <Popconfirm
+                      title="Delete the post"
+                      description="Are you sure to delete this post?"
+                      onConfirm={() =>deletePost(item)}
+                      okText="Yes"
+                      cancelText="No"
+                      placement="rightBottom"
+                      okButtonProps={{ style: { background: '#ff4d4f', borderColor: '#ff4d4f' } }} 
+                    >
+                      <CustomButton
+                        children='Delete'
+                        danger
+                        loading={deleting}
+                      />
+                    </Popconfirm>
+                    </div>
+                    </div>
+                    <p className='text-lg font-semibold italic'></p>
                     </div>
                     <div className='flex gap-4'>
                       <div>
@@ -440,16 +461,19 @@ export const MyBusiness = () => {
                       >
                         <Image
                           width={200}
+                          height={200}
                           className='rounded-lg border-2 border-[#00256E]'
                           src={item.photos?.length > 0 ? item.photos[0] : ''}
                         />
                       </Image.PreviewGroup>
                       </div>
                       <div>
-                        {item.description}
+                        <p className='line-clamp-4'>{item.description}</p>
+                        {item.location && <p className='font-semibold'>Location: {item.location}</p>}
+                        {item.address && <p className='font-semibold'>Address: {item.address}</p>}
                       </div>
                     </div>
-                  </div>
+            </div>
             </Skeleton>
           </List.Item>
         )}} /> : (
@@ -462,7 +486,7 @@ export const MyBusiness = () => {
           renderItem={(item:any,idx:number) => (
             <List.Item>
               <Skeleton avatar title={false} loading={item.loading} active>
-              <div key={idx} className='bg-white p-4 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]'>
+              <div key={idx} className='min-w-[400px] bg-white p-4 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px]'>
                 <div className='flex flex-col gap-4'>
                   <div className='flex justify-between items-center'>
                   <h3 className='font-bold text-lg mb-2'>{item.Title}</h3>

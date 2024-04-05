@@ -6,6 +6,7 @@ import { LandingPage,Signup,Login, AdminDashboard, Accounts, AdminTalk, TravelAd
 import { Private, Public } from './layout';
 import { Error } from './pages/error/error';
 import TouristSelected from './pages/private/TravellerSide/Tourist';
+import TouristSelectedBusiness from './pages/private/BusinessSide/Tourist';
 function App() {
   const router = createBrowserRouter([
     {
@@ -49,6 +50,7 @@ function App() {
         {path:RouterUrl.BUSINESSPROFILE,element:<BusinessProfile/>},
         {path:RouterUrl.BUSINESSSIDE,element:<BusinessDashboard/>},
         {path:RouterUrl.BUSINESSTALK,element:<BusinessTalk/>},
+        {path:RouterUrl.TOURISTSELECTEDBUSINESS,element:<TouristSelectedBusiness/>},
       ]
     }
   ])

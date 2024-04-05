@@ -5,7 +5,7 @@ export const RouterUrl = {
     ADMINSIDE:'/AdminDashboard/Home',
     ADMINBOOKING:'/AdminDashboard/Booking',
     ADMINACCOUNTS:'/AdminDashboard/Accounts',
-    ADMINTRAVELTALK:'/AdminDashboard/TravelTalk',
+    ADMINTRAVELTALK:'/AdminDashboard/AllPost',
     ADMINPROFILE:'/AdminDashboard/Profile',
     TRAVELLERSIDE:'/UserDashBoard/HomePage',
     TRAVELLERBOOKING:'/UserDashBoard/MakeABooking',
@@ -20,5 +20,6 @@ export const RouterUrl = {
     BUSINESSMINE:'/BusinessDashBoard/MyBusiness',
     BUSINESSTALK:'/BusinessDashBoard/Talk',
     BUSINESSPROFILE:'/BusinessDashBoard/Profile',
+    TOURISTSELECTEDBUSINESS:'/BusinessDashBoard/HomePage/:type/:name',
     // ERROR: '/*',
 }

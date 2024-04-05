@@ -71,7 +71,8 @@ export const TravelFrm = () => {
             password:values.password,
             phoneNumber: values.phoneNumber,
             validId: imageUrl[0],
-            userType:'traveller'
+            userType:'traveller',
+            accountStatus:'Active'
         }
         await addData('tbl_traveller',dataToSend);
         api.success({

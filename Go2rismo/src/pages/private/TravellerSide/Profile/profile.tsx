@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Avatar,Button,Form,Input, List, Upload, message } from 'antd';
+import { Avatar,Button,Form,Input, List, Popconfirm, Upload, message } from 'antd';
 import {  UserOutlined } from '@ant-design/icons';
 import useStore from '../../../../zustand/store/store';
-import { saveAllEventsForTraveller, saveTravellerInfo, selector } from '../../../../zustand/store/store.provide';
+import { logoutTraveller, saveAllEventsForTraveller, saveTravellerInfo, selector } from '../../../../zustand/store/store.provide';
 import { CustomButton } from '../../../../components/Button/CustomButton';
 import { useEffect, useState } from 'react';
 import { updateData } from '../../../../hooks/useUpdateData';
@@ -14,10 +14,13 @@ import { FaCamera } from "react-icons/fa";
 import { uploadImageToStorage } from '../../../../config/uploadFile';
 import { fetchData, fetchDataById } from '../../../../hooks/useFetchData';
 import { T_Events } from '../../../../types';
+import { RouterUrl } from '../../../../routes';
+import { useNavigate } from 'react-router-dom';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
 export const TravelProfile = () => {
+  const navigate = useNavigate()
   const traveller = useStore(selector('traveller'))
   const [formData, setFormData] = useState(traveller.info);
   const [changeLogo, setChangeLogo] = useState<boolean>(false);
@@ -127,7 +130,7 @@ export const TravelProfile = () => {
 
   const onPreview = async (file: UploadFile) => {
     let src = file.url as string;
-    if (!src) {
+    if (!src){
       src = await new Promise((resolve) => {
         const reader = new FileReader();
         reader.readAsDataURL(file.originFileObj as FileType);
@@ -138,6 +141,18 @@ export const TravelProfile = () => {
     image.src = src;
     const imgWindow = window.open(src);
     imgWindow?.document.write(image.outerHTML);
+  };
+
+  const confirm = async(e?: React.MouseEvent<HTMLElement, MouseEvent> | undefined) => {
+    console.log(e);
+    await updateData('tbl_traveller',traveller.info.id,{accountStatus:'Deleted'})
+    logoutTraveller()
+    navigate(RouterUrl.LOGIN)
+    message.success('Account deleted');
+  };
+  
+  const cancel = (e?: React.MouseEvent<HTMLElement, MouseEvent> | undefined) => {
+    console.log(e);
   };
   return (
     <div className='flex gap-16'>
@@ -211,17 +226,28 @@ export const TravelProfile = () => {
               loading={isLoading}
               htmlType='submit'
             />  
+            <Popconfirm
+              title="Delete this account"
+              description="Are you sure to delete this account?"
+              onConfirm={confirm}
+              onCancel={cancel}
+              okText="Delete now"
+              placement="bottomRight"
+              cancelText="Cancel"
+              okButtonProps={{ style: { background: '#ff4d4f', borderColor: '#ff4d4f' } }} 
+            >
             <CustomButton
               children='Delete Account'
               classes='bg-sky-700 text-white  hover:opacity-90 m-4 w-32'
             />  
+            </Popconfirm>
             </div>
       
           </div>
         </div>
       </Form>
-      <div className='p-8 pb-0 flex flex-col justify-between flex-1 h-full'>
-        <div className='w-full h-[300px] p-4'>
+      <div className='p-8 pb-0 flex flex-col gap-4 flex-1 h-full'>
+        <div className='w-full h-[450px] p-4'>
           <h1 className='font-bold text-2xl'>Notifications</h1>
           <List
               className="demo-loadmore-list h-[300px] overflow-y-auto"

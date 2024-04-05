@@ -113,11 +113,12 @@ const createBusinessSlice: StateCreator<BusinessSlice> = (set) =>({
       }
     },
     fetchBusiness:async(payload) =>{
+      console.log(payload)
       set((state) => ({
         ...state,
         business: {
           ...state.business,
-          businessList: payload,
+          businessList: payload.filter((item: any) => item.isDeleted === false),
           loading: false,
           responseMsg: '',
         },
@@ -125,15 +126,16 @@ const createBusinessSlice: StateCreator<BusinessSlice> = (set) =>({
     },
     saveAllBusinessForBusinessMan:async(payload:any) =>{
       try {
+        console.log(payload)
           set((state) => ({
             ...state,
             business: {
               ...state.business,
               businessType:{
-                hotelRoom:payload?.filter((item: { type: string; }) => item.type === 'Hotel & Rooms'),
-                beachResorts:payload?.filter((item: { type: string; }) => item.type === 'Beach Resorts'),
-                touristSpots:payload?.filter((item: { type: string; }) => item.type === 'Tourist Spots'),
-                foodRestaurant:payload?.filter((item: { type: string; }) => item.type === 'Food & Restaurant'),
+                hotelRoom:payload?.filter((item: any) => item.type === 'Hotel & Rooms' && item.isDeleted === false),
+                beachResorts:payload?.filter((item: any) => item.type === 'Beach Resorts' && item.isDeleted === false),
+                touristSpots:payload?.filter((item:any) => item.type === 'Tourist Spots' && item.isDeleted === false),
+                foodRestaurant:payload?.filter((item:any) => item.type === 'Food & Restaurant' && item.isDeleted === false),
               },
               loading: false,
               responseMsg: '',
@@ -178,15 +180,16 @@ const createBusinessSlice: StateCreator<BusinessSlice> = (set) =>({
     },
     saveAllPostBusiness:async(payload:any) =>{
       try {
+        console.log(payload)
           set((state) => ({
             ...state,
             business: {
               ...state.business,
               businessType:{
-                hotelRoom:payload?.filter((item: { type: string; }) => item.type === 'Hotel & Rooms'),
-                beachResorts:payload?.filter((item: { type: string; }) => item.type === 'Beach Resorts'),
-                touristSpots:payload?.filter((item: { type: string; }) => item.type === 'Tourist Spots'),
-                foodRestaurant:payload?.filter((item: { type: string; }) => item.type === 'Food/Restaurant'),
+                hotelRoom:payload?.filter((item: any) => item.type === 'Hotel & Rooms' && item.isDeleted === false),
+                beachResorts:payload?.filter((item: any) => item.type === 'Beach Resorts' && item.isDeleted === false),
+                touristSpots:payload?.filter((item:any) => item.type === 'Tourist Spots' && item.isDeleted === false),
+                foodRestaurant:payload?.filter((item:any) => item.type === 'Food & Restaurant' && item.isDeleted === false),
               },
               allPost:payload,
               loading: false,

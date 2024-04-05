@@ -100,7 +100,7 @@ export const BusinessProfile = () => {
     await updateData('tbl_business',business.info.id,{accountStatus:'Deleted'})
     logoutBusiness()
     navigate(RouterUrl.LOGIN)
-    message.success('Click on Yes');
+    message.success('Account deleted');
   };
   
   const cancel = (e?: React.MouseEvent<HTMLElement, MouseEvent> | undefined) => {

@@ -25,6 +25,12 @@ export const Login = () => {
           const isExist = userList.allUser?.find((item:any) => item.email === values.email && item.password === values.password);
           if (isExist) {
             setLoading(false)
+            if(isExist.accountStatus !== 'Active'){
+              notification.error({
+                message: 'Your account was deleted',
+              });
+              return
+            }
             notification.success({
               message: 'Login Successfully',
             });

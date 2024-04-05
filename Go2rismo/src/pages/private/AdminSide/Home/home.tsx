@@ -23,7 +23,7 @@ export const AdminDashboard = () => {
     setInitLoading(true);
     const response = await fetchData('tbl_postList');
     const res = await fetchData('tbl_announcements&Events')
-    console.log(response)
+    response.shift()
     saveAllPostAdmin(response)
     saveAllEventsAdmin(res)
     setInitLoading(false);
@@ -59,14 +59,14 @@ export const AdminDashboard = () => {
   ) : null;
   console.log(list)
   return (
-    <div className='flex flex-nowrap'>
-      <div className='w-[1100px]'>
+    <div className='flex flex-nowrap overflow-x-auto'>
+      <div className='w-[850px]'>
 
         <div className='px-8 pt-8 flex flex-col'>
           <div>
             <h1 className='font-bold text-3xl'>Beach & Resorts</h1>
-            <div className='w-[980px] p-4'>
-            {allPost?.businessType.beachResorts.length > 0 ? <Swiper
+            <div className='w-[800px] p-4'>
+            {allPost?.businessType.beachResorts?.length > 0 ? <Swiper
               ref={swiperRef}
               slidesPerView={4}
               spaceBetween={0}
@@ -76,15 +76,15 @@ export const AdminDashboard = () => {
             >
              {allPost?.businessType.beachResorts?.map((item:any,idx:number) =>(
               <SwiperSlide className=''>
-                <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
+                <div  key={idx} className='w-[222.5px] h-[150px] bg-white rounded-lg relative'>
                 <div className='relative'>
                 <img 
                 src={item.photos[0]} 
-                className="w-full rounded-lg w-[200px] h-[150px]"
+                className="w-full rounded-lg w-[170px] h-[150px]"
                 />
-                <p className='bg-white/40 font-bold backdrop-blur-sm rounded-lg px-4 py-2 absolute bottom-4 left-4'>{item.name}</p>
+                <p className='line-clamp-1 bg-white/40 font-bold backdrop-blur-sm rounded-lg px-4 py-2 absolute bottom-4 left-4'>{item.name}</p>
                 </div>
-                </a>
+                </div>
               </SwiperSlide>
              ))}
             </Swiper> : <p>No post has been made</p>}
@@ -92,8 +92,8 @@ export const AdminDashboard = () => {
           </div>
           <div>
             <h1 className='font-bold text-3xl'>Hotel and Room</h1>
-            <div className='w-[980px] p-4'>
-            {allPost?.businessType.hotelRoom.length > 0 ? <Swiper
+            <div className='w-[800px] p-4'>
+            {allPost?.businessType.hotelRoom?.length > 0 ? <Swiper
               ref={swiperRef}
               slidesPerView={4}
               spaceBetween={0}
@@ -103,15 +103,15 @@ export const AdminDashboard = () => {
             >
              {allPost?.businessType.hotelRoom?.map((item:any,idx:number) =>(
               <SwiperSlide className=''>
-                <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
+                <div  key={idx} className='w-[222.5px] h-[150px] bg-white rounded-lg relative'>
                 <div className='relative'>
                 <img 
                 src={item.photos[0]} 
-                className="w-full rounded-lg w-[200px] h-[150px]"
+                className="w-full rounded-lg w-[170px] h-[150px]"
                 />
-                <p className='bg-white/40 font-bold backdrop-blur-sm rounded-lg px-4 py-2 absolute bottom-4 left-4'>{item.name}</p>
+                <p className='line-clamp-1 bg-white/40 font-bold backdrop-blur-sm rounded-lg px-4 py-2 absolute bottom-4 left-4'>{item.name}</p>
                 </div>
-                </a>
+                </div>
               </SwiperSlide>
              ))}
             </Swiper> : <p>No post has been made</p>}
@@ -119,8 +119,8 @@ export const AdminDashboard = () => {
           </div>
           <div>
             <h1 className='font-bold text-3xl'>Foods and Restaurant</h1>
-            <div className='w-[980px] p-4'>
-            {allPost?.businessType.foodRestaurant.length > 0 ? <Swiper
+            <div className='w-[800px] p-4'>
+            {allPost?.businessType.foodRestaurant?.length > 0 ? <Swiper
               ref={swiperRef}
               slidesPerView={4}
               spaceBetween={0}
@@ -130,15 +130,15 @@ export const AdminDashboard = () => {
             >
              {allPost?.businessType.foodRestaurant?.map((item:any,idx:number) =>(
               <SwiperSlide className=''>
-                <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
+                <div  key={idx} className='w-[222.5px] h-[150px] bg-white rounded-lg relative'>
                 <div className='relative'>
                 <img 
                 src={item.photos[0]} 
-                className="w-full rounded-lg w-[200px] h-[150px]"
+                className="w-full rounded-lg w-[170px] h-[150px]"
                 />
-                <p className='bg-white/40 font-bold backdrop-blur-sm rounded-lg px-4 py-2 absolute bottom-4 left-4'>{item.name}</p>
+                <p className='line-clamp-1 bg-white/40 font-bold backdrop-blur-sm rounded-lg px-4 py-2 absolute bottom-4 left-4'>{item.name}</p>
                 </div>
-                </a>
+                </div>
               </SwiperSlide>
              ))}
             </Swiper> : <p>No post has been made</p>}
@@ -146,8 +146,8 @@ export const AdminDashboard = () => {
           </div>
           <div>
             <h1 className='font-bold text-3xl'>Tourist Spots</h1>
-            <div className='w-[980px] p-4'>
-            {allPost?.businessType.touristSpots.length > 0 ? <Swiper
+            <div className='w-[800px] p-4'>
+            {allPost?.businessType.touristSpots?.length > 0 ? <Swiper
               ref={swiperRef}
               slidesPerView={4}
               spaceBetween={0}
@@ -157,15 +157,15 @@ export const AdminDashboard = () => {
             >
              {allPost?.businessType.touristSpots?.map((item:any,idx:number) =>(
               <SwiperSlide className=''>
-                <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
+                <div key={idx} className='w-[222.5px] h-[150px] bg-white rounded-lg relative'>
                 <div className='relative'>
                 <img 
                 src={item.photos[0]} 
-                className="w-full rounded-lg w-[200px] h-[150px]"
+                className="w-full rounded-lg w-[170px] h-[150px]"
                 />
-                <p className='bg-white/40 font-bold backdrop-blur-sm rounded-lg px-4 py-2 absolute bottom-4 left-4'>{item.name}</p>
+                <p className='line-clamp-1 bg-white/40 font-bold backdrop-blur-sm rounded-lg px-4 py-2 absolute bottom-4 left-4'>{item.name}</p>
                 </div>
-                </a>
+                </div>
               </SwiperSlide>
              ))}
             </Swiper> : <p>No post been made</p>}

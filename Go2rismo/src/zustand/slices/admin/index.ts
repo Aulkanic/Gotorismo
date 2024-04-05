@@ -86,6 +86,7 @@ const createAdminSlice: StateCreator<AdminSlice> = (set) =>({
                 beachResorts:payload?.filter((item: { type: string; }) => item.type === 'Beach Resorts'),
                 touristSpots:payload?.filter((item: { type: string; }) => item.type === 'Tourist Spots'),
                 foodRestaurant:payload?.filter((item: { type: string; }) => item.type === 'Food & Restaurant'),
+                all:payload
               },
               loading: false,
               responseMsg: '',
@@ -167,6 +168,7 @@ const createAdminSlice: StateCreator<AdminSlice> = (set) =>({
                 beachResorts:payload?.filter((item: { type: string; }) => item.type === 'Beach Resorts'),
                 touristSpots:payload?.filter((item: { type: string; }) => item.type === 'Tourist Spots'),
                 foodRestaurant:payload?.filter((item: { type: string; }) => item.type === 'Food & Restaurant'),
+                all:payload?.filter((item:any) => !item.isDeleted)
               },
               allPost:payload,
               loading: false,

@@ -3,20 +3,17 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
 import useStore from '../../../../zustand/store/store';
-import { saveAllFavorites, saveAllPost, selector } from '../../../../zustand/store/store.provide';
+import { saveAllFavorites, saveAllPostBusiness, selector } from '../../../../zustand/store/store.provide';
 import { Avatar, Button, Form, Image, List, Rate, notification,Modal,DatePicker,InputNumber } from 'antd';
 import { CustomButton } from '../../../../components/Button/CustomButton';
 import TextArea from 'antd/es/input/TextArea';
 import { updateData } from '../../../../hooks/useUpdateData';
 import { T_Reviews } from '../../../../types';
 import { fetchData, fetchDataCondition } from '../../../../hooks/useFetchData';
-import { AddToFavorites } from '../../../../config/addFavorites';
-import { FaHeart } from "react-icons/fa";
 import { CalculateRating } from '../../../../config/calculateRate';
 import { addData } from '../../../../hooks/useAddData';
-import { currencyFormat } from '../../../../utils/utils';
 
-export default function TouristSelected() {
+export default function TouristSelectedBusiness() {
     const { type,name } = useParams();
     const [open, setOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -25,20 +22,19 @@ export default function TouristSelected() {
     const [isOpen,setIsOpen] = useState(false);
     const [isLoading,setIsLoading] = useState(false)
     const [initLoading, setInitLoading] = useState(true);
-    const [favsLoading,setFavLoading] = useState(false)
     const [loading, setLoading] = useState(false);
     const [list, setList] = useState<T_Reviews[]>([]);
-    const allPost = useStore(selector('traveller'))
-    const details = allPost.post?.filter((item: { type: string | undefined; name: string | undefined; }) => item.type === type && item.name === name)
+    const allPost = useStore(selector('business'))
+    const details = allPost.allPost?.filter((item: { type: string | undefined; name: string | undefined; }) => item.type === type && item.name === name)
     const countPerPage = 2;
 
     async function Fetch(){
       setInitLoading(true);
       const response = await fetchData('tbl_postList')
-      response.shift()
       const res = await fetchDataCondition('tbl_favorites',[{ field: "travellerId", operator: "==", value: allPost.info.id }])
+      response.shift()
       saveAllFavorites(res)
-      saveAllPost(response)
+      saveAllPostBusiness(response)
       setInitLoading(false);
     }
 
@@ -108,25 +104,6 @@ export default function TouristSelected() {
         setIsLoading(false)
       }
     } 
-    const handleAddFavorites = async() =>{
-      setFavLoading(true)
-      if(details.length === 0 || !allPost.info){
-        notification.error({
-          message: "No Post selected"
-        })
-        return
-      }
-      await AddToFavorites(details[0],allPost.info)
-      Fetch()
-      setFavLoading(false)
-      notification.success({
-        message:'Added to your  favorite list'
-      })
-    }
-
-    const showModal = () => {
-      setOpen(true);
-    };
   
     const handleBook = async(values:any) => {
       try {
@@ -168,8 +145,7 @@ export default function TouristSelected() {
       console.log('Clicked cancel button');
       setOpen(false);
     };
-    const rating = details[0].reviews ? CalculateRating(details[0].reviews) : 0;
-    const favs = allPost.favorites ? allPost.favorites?.map((item:any)=> item.favorites[0].id) || [] : null
+    const rating = (details?.length > 0 && details[0].reviews) ? CalculateRating(details[0].reviews) : 0;
   return (
     <div className='pt-8 flex flex-nowrap'>
       <div className='pl-8 w-1/2'>
@@ -182,34 +158,9 @@ export default function TouristSelected() {
         <div className='mt-2'>
           <div className='w-full flex justify-between'>
             <h1 className='text-3xl'>{name}</h1>
-            <div className='flex gap-4'>
-              <div>
-              {(favs && favs?.find((item:any) => item === details[0].id)) ? <CustomButton
-                children={<div className='flex items-center gap-2 '><FaHeart /> <p>Favorites</p></div>}
-                classes='bg-sky-600 text-white w-max px-4'
-              /> : (
-                <CustomButton
-                children={'Add to Favorites'}
-                classes='bg-sky-600 text-white w-max px-4'
-                loading={favsLoading}
-                onClick={()=>{handleAddFavorites()}}
-              />              
-              )}
-              </div>
-              <div>
-                {(details[0]?.type !== 'Food & Restaurant' || details[0]?.type !== 'Tourist Spots') && <CustomButton
-                  children="Book Now"
-                  onClick={showModal}
-                />}
-              </div>
-            </div>
-
           </div>
           <div>
-            <p>{details[0].location}</p>
-            <p>{details[0].address}</p>
-          <Rate allowHalf defaultValue={rating} disabled />
-          <p>{currencyFormat(details[0].price || 0)}</p>
+          <Rate allowHalf defaultValue={rating} />
           </div>
         </div>
         <div>

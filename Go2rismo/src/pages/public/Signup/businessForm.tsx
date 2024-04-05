@@ -80,8 +80,8 @@ export const BusinessFrm = () => {
                 phoneNumber: values.phoneNumber,
                 validId: validIdUrls[0],
                 businessPermit:businessPermitUrls[0],
-                userType:'business'
-
+                userType:'business',
+                accountStatus:'Active'
             }
             await addData('tbl_business',dataToSend);
             api.success({

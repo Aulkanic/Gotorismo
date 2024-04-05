@@ -4,6 +4,8 @@ import { fetchData } from '../../../../hooks/useFetchData'
 import { T_Accounts } from '../../../../types';
 import CustomTable from '../../../../components/Table';
 import { CustomButton } from '../../../../components/Button/CustomButton';
+import { updateData } from '../../../../hooks/useUpdateData';
+import { message } from 'antd';
 
 export const Accounts = () => {
   const [loading,setLoading] = useState(false)
@@ -18,8 +20,8 @@ export const Accounts = () => {
     const businesses = await fetchData('tbl_business');
     setAllAccount((prev) =>({
       ...prev,
-      traveller:travellers?.map((item,idx) =>({...item,key:item.id,NoID:idx+1})),
-      business:businesses?.map((item) =>({...item,key:item.id}))
+      traveller:travellers?.map((item,idx) =>({...item,key:item.id,NoID:idx+1,type:'Traveller'})),
+      business:businesses?.map((item) =>({...item,key:item.id,type:'Business'}))
     }))
     setLoading(false)
   }
@@ -28,12 +30,21 @@ export const Accounts = () => {
     Fetch()
   },[])
 
+  const handleEnable = async(data:any) => {
+    setLoading(true)
+    await updateData(data.type === 'Traveller' ? 'tbl_traveller' : 'tbl_business',data.id,{accountStatus:'Active'})
+    Fetch()
+    setLoading(false)
+    message.success('Account Activated');
+  };
+  const handleDisable = async(data:any) => {
+    setLoading(true)
+    await updateData(data.type === 'Traveller' ? 'tbl_traveller' : 'tbl_business',data.id,{accountStatus:'Deleted'})
+    Fetch()
+    setLoading(false)
+    message.success('Account deleted');
+  };
   const columns = [
-    {
-      key: 0,
-      dataIndex: 'NoID',
-      title: 'No.',
-    },
     {
       key: 1,
       dataIndex: 'firstName',
@@ -61,32 +72,39 @@ export const Accounts = () => {
     },
     {
       key: 6,
+      dataIndex: 'type',
+      title: 'Type',
+    },
+    {
+      key: 6,
       title: 'Action',
-      render: () => (
+      render: (data:any) => (
         <div className='flex gap-4'>
-          <CustomButton
+          {data.accountStatus === 'Deleted' ? <CustomButton
             children='Enable'
             htmlType='button'
             classes='bg-blue-500 text-white'
-          />
-          <CustomButton
-            children='Disable'
-            danger
-          />
+            onClick={() =>handleEnable(data)}
+          /> : <CustomButton
+          children='Disable'
+          danger
+          onClick={() =>handleDisable(data)}
+        />}
+
         </div>
       ),
     },
   ];
   
-  
+  const all = [...allAccount.traveller,...allAccount.business]
   return (
     <div className='p-8'>
       <div className='text-center'>
-      <h1 className='font-bold text-2xl mb-4'>List of Travellers</h1>
+      <h1 className='font-bold text-2xl mb-4'>List of Travellers and Business</h1>
       <CustomTable
         columns={columns}
         loading={loading}
-        datasource={allAccount.traveller}
+        datasource={all}
       />
       </div>
 

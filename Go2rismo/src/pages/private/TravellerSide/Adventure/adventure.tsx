@@ -49,6 +49,7 @@ export const TravelAdventure = () => {
               
               <p>{item.description}</p>
               {item.location && <p>Location: {item.location}</p>}
+              {item.address && <p>Address: {item.address}</p>}
               {item.price && <p>Price: {item.price}</p>}
               </div>
 

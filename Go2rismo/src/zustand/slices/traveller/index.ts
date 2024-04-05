@@ -79,16 +79,17 @@ const createTravellerSlice: StateCreator<TravellerSlice> = (set) =>({
           }
     },
     saveAllPost:async(payload:any) =>{
+
       try {
           set((state) => ({
             ...state,
             traveller: {
               ...state.traveller,
               businessType:{
-                hotelRoom:payload?.filter((item: { type: string; }) => item.type === 'Hotel & Rooms'),
-                beachResorts:payload?.filter((item: { type: string; }) => item.type === 'Beach Resorts'),
-                touristSpots:payload?.filter((item: { type: string; }) => item.type === 'Tourist Spots'),
-                foodRestaurant:payload?.filter((item: { type: string; }) => item.type === 'Food & Restaurant'),
+                hotelRoom:payload?.filter((item: any) => item.type === 'Hotel & Rooms' && item.isDeleted === false),
+                beachResorts:payload?.filter((item: any) => item.type === 'Beach Resorts' && item.isDeleted === false),
+                touristSpots:payload?.filter((item:any) => item.type === 'Tourist Spots' && item.isDeleted === false),
+                foodRestaurant:payload?.filter((item:any) => item.type === 'Food & Restaurant' && item.isDeleted === false),
               },
               post:payload,
               loading: false,
