@@ -185,7 +185,6 @@ export const BusinessFrm = () => {
                 rules={[{ required: true, message: 'Please select your Business Location!' }]}
                 >
                 <Select 
-                mode="multiple"
                 allowClear
                 >
                     <Select.Option value="">-select location-</Select.Option>
@@ -249,7 +248,6 @@ export const BusinessFrm = () => {
                 rules={[{ required: true, message: 'Please select your business type first!' }]}
                 >
                 <Select 
-                mode="multiple"
                 allowClear
                 >
                     <Select.Option value="">-select business-</Select.Option>
@@ -260,12 +258,12 @@ export const BusinessFrm = () => {
                 </Form.Item>
                 </div>
                 <div className='flex-1'>
-                <Form.Item label="Business Permit" name='businessPermit' valuePropName="fileList" getValueFromEvent={normFile}>
+                <Form.Item label="Business Permit" name='businessPermit' className='mb-0' valuePropName="fileList" getValueFromEvent={normFile}>
                 <Upload action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188" listType="picture" maxCount={1}>
                 <Button className='w-full bg-white' icon={<UploadOutlined />}>Upload here</Button>
                 </Upload>
                 </Form.Item>
-                <Form.Item label="Valid ID" name='validId' valuePropName="fileList" getValueFromEvent={normFile}>
+                <Form.Item label="Valid ID" name='validId' className='mb-0' valuePropName="fileList" getValueFromEvent={normFile}>
                 <Upload action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188" listType="picture" maxCount={1}>
                 <Button className='w-full bg-white' icon={<UploadOutlined />}>Upload here</Button>
                 </Upload>

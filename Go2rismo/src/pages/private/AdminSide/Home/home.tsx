@@ -68,7 +68,7 @@ export const AdminDashboard = () => {
             <div className='w-[800px] p-4'>
             {allPost?.businessType.beachResorts?.length > 0 ? <Swiper
               ref={swiperRef}
-              slidesPerView={4}
+              slidesPerView={3}
               spaceBetween={0}
               navigation={true}
               modules={[Pagination, Navigation]}
@@ -95,7 +95,7 @@ export const AdminDashboard = () => {
             <div className='w-[800px] p-4'>
             {allPost?.businessType.hotelRoom?.length > 0 ? <Swiper
               ref={swiperRef}
-              slidesPerView={4}
+              slidesPerView={3}
               spaceBetween={0}
               navigation={true}
               modules={[Pagination, Navigation]}
@@ -122,7 +122,7 @@ export const AdminDashboard = () => {
             <div className='w-[800px] p-4'>
             {allPost?.businessType.foodRestaurant?.length > 0 ? <Swiper
               ref={swiperRef}
-              slidesPerView={4}
+              slidesPerView={3}
               spaceBetween={0}
               navigation={true}
               modules={[Pagination, Navigation]}
@@ -149,7 +149,7 @@ export const AdminDashboard = () => {
             <div className='w-[800px] p-4'>
             {allPost?.businessType.touristSpots?.length > 0 ? <Swiper
               ref={swiperRef}
-              slidesPerView={4}
+              slidesPerView={3}
               spaceBetween={0}
               navigation={true}
               modules={[Pagination, Navigation]}

@@ -85,10 +85,10 @@ export const BusinessDashboard = () => {
         <div className='px-8 flex flex-col pt-8'>
           <div>
             <h1 className='font-bold text-3xl'>Beach & Resorts</h1>
-            <div className='w-[980px] p-4'>
+            <div className='w-[800px] p-4'>
             <Swiper
               ref={swiperRef}
-              slidesPerView={4}
+              slidesPerView={3}
               spaceBetween={0}
               navigation={true}
               modules={[Pagination, Navigation]}
@@ -114,10 +114,10 @@ export const BusinessDashboard = () => {
           </div>
           <div>
             <h1 className='font-bold text-3xl'>Hotel and Room</h1>
-            <div className='w-[980px] p-4'>
+            <div className='w-[800px] p-4'>
             <Swiper
               ref={swiperRef}
-              slidesPerView={4}
+              slidesPerView={3}
               spaceBetween={0}
               navigation={true}
               modules={[Pagination, Navigation]}
@@ -141,10 +141,10 @@ export const BusinessDashboard = () => {
           </div>
           <div>
             <h1 className='font-bold text-3xl'>Foods and Restaurant</h1>
-            <div className='w-[980px] p-4'>
+            <div className='w-[800px] p-4'>
             {allPost?.businessType?.foodRestaurant?.length > 0 ? <Swiper
               ref={swiperRef}
-              slidesPerView={4}
+              slidesPerView={3}
               spaceBetween={0}
               navigation={true}
               modules={[Pagination, Navigation]}
