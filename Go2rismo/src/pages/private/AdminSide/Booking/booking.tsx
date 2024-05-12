@@ -49,7 +49,7 @@ export const AdminBooking = () => {
       title: 'Phone Number',
       render: (data:any) => (
         <div className='flex gap-4'>
-          <p>{`${data.phoneNumber}`}</p>
+          <p>{`${data?.phoneNumber}`}</p>
         </div>
       ),
     },

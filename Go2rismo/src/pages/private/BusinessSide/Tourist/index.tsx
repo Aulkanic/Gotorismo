@@ -152,7 +152,9 @@ export default function TouristSelectedBusiness() {
         <div className='flex flex-col gap-4'>
           <h1 className='text-3xl font-bold'>{type}</h1>
           <div>
-            <Image width={600} height={400} className='rounded-lg' src={details[0].photos[0]} alt="" />
+          <Image.PreviewGroup items={details[0].photos?.map((item:any) => item)}>
+            <Image width={600} height={400} className='w-20 aspect-square rounded-md' src={details[0].photos[0]} alt="" />
+          </Image.PreviewGroup>
           </div>
         </div>
         <div className='mt-2'>

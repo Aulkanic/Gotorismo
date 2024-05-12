@@ -23,13 +23,13 @@ export const TravelAdventure = () => {
 
    const travels =traveller?.itinerary?.length > 0 && traveller?.itinerary[0]?.itinerary?.length > 0 ? traveller?.itinerary[0]?.itinerary : []
   return (
-    <div className='px-16 py-8'>
+    <div className='px-4 md:px-16 py-8'>
       <div className='w-[100%]'>
-        <div className='mb-8 flex justify-between items-center '>
-        <h1 className='text-[32px] font-bold'> Travel Adventure</h1>
+        <div className='mb-8 flex flex-col sm:flex-row justify-end items-end sm:justify-between sm:items-center '>
+        <h1 className='w-full mb-4 text-[32px] font-bold'> Travel Adventure</h1>
         <CustomButton
         children='Add more Adventure'
-        classes='bg-sky-700 text-white'
+        classes='w-max bg-sky-700 text-white'
         onClick={() => navigate(RouterUrl.TRAVELLERPLAN)}
         />
         </div>
@@ -40,7 +40,7 @@ export const TravelAdventure = () => {
             dot={item.dot ? <ClockCircleOutlined style={{ fontSize: '16px' }} /> : null}
             color={item.color}
           >
-            <div className='flex gap-4'>
+            <div className='flex flex-col sm:flex-row gap-4'>
               <div>
                 <Image src={item.photos[0]} width={200} height={200} />
                 <h3>{item.name}</h3>

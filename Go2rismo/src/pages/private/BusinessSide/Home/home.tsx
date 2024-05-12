@@ -69,7 +69,6 @@ export const BusinessDashboard = () => {
     })
     setSearchQuery(res);
   }, [allPost.allPost]);
-  console.log(allPost)
   return (
     <div className='w-full flex flex-nowrap overflow-x-auto'>
       <div className='w-[850px]'>
@@ -97,7 +96,7 @@ export const BusinessDashboard = () => {
              {allPost?.businessType?.beachResorts?.map((item:any,idx:number) =>(
               <SwiperSlide className=''>
               <SwiperSlide className=''>
-                <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
+                <a href={`/BusinessDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
                 <div className='relative'>
                 <img 
                 src={item.photos[0]} 
@@ -125,7 +124,7 @@ export const BusinessDashboard = () => {
             >
              {allPost?.businessType?.hotelRoom?.map((item:any,idx:number) =>(
               <SwiperSlide className=''>
-              <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
+              <a href={`/BusinessDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
               <div className='relative'>
               <img 
               src={item.photos[0]} 
@@ -152,7 +151,7 @@ export const BusinessDashboard = () => {
             >
              {allPost?.businessType?.foodRestaurant?.map((item:any,idx:number) =>(
               <SwiperSlide className=''>
-                <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
+                <a href={`/BusinessDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
                 <div className='relative'>
                 <img 
                 src={item.photos[0]} 

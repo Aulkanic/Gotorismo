@@ -80,7 +80,7 @@ export const TravelBooking = () => {
     },
   ];
   return (
-    <div className="px-12 pt-4">
+    <div className="px-2 lg:px-12 pt-4">
       <h1 className="text-lg font-bold">List of Booking</h1>
       <CustomTable
         columns={columns}

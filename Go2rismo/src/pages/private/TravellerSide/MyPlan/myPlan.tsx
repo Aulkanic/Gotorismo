@@ -19,7 +19,7 @@ export const TravelPlan = () => {
     numPersons: 0,
     numDays: 0,
   })
-  const [filterData,setFilterData] = useState(traveller.post  || [])
+  const [filterData,setFilterData] = useState(traveller.post?.filter((val:any) => !val.isDeleted)  || [])
    const [selectedItems, setSelectedItems] = useState<any[]>([]);
    const [loadingMap, setLoadingMap] = useState<Record<string, boolean>>({});
    const [isLoading,setIsLoading] = useState(false)
@@ -103,10 +103,9 @@ export const TravelPlan = () => {
     }
   }
   const list = traveller.itinerary?.length > 0 ? traveller.itinerary[0] : []
-console.log(filter)
   return (
-    <div className='flex'>
-      <div className='flex flex-col gap-2 py-4 bg-[#00256E]/70 min-h-screen h-full text-white px-4'>
+    <div className='flex flex-wrap flex-col sm:flex-row md:flex-row lg:flex-row'>
+      <div className='w-full sm:w-[300px] lg:w-[400px] flex flex-col gap-2 py-4 bg-[#00256E]/70 h-max sm:min-h-screen pb-4 text-white px-4'>
       <h1 className='font-bold text-lg tracking-wider'>Budget Travel Tool</h1>
         <div className='flex flex-col gap-2'>
         <label htmlFor="place">Select Place: </label>
@@ -172,19 +171,19 @@ console.log(filter)
           <label htmlFor="">Enter Budget:</label>
           <InputNumber
             min={0}
-            style={{width:'350px'}}
+            style={{width:'100%'}}
             onChange={(value) => onChange(value, 'budget')}
           />
           <label htmlFor="">Enter No. of Person:</label>
           <InputNumber
             min={0}
-            style={{width:'350px'}}
+            style={{width:'100%'}}
             onChange={(value) => onChange(value, 'numPersons')}
           />
           <label htmlFor="">Enter No. of Days:</label>
           <InputNumber
             min={0}
-            style={{width:'350px'}}
+            style={{width:'100%'}}
             onChange={(value) => onChange(value, 'numDays')}
           />
         </div>
@@ -192,25 +191,25 @@ console.log(filter)
           children='Calculate'
           onClick={() => handleCalculate()}
           size='large'
-          classes='w-[350px] mt-4 text-white'
+          classes='w-full mt-4 text-white'
           />
       </div>
-      <div className='px-8 flex flex-col gap-4 mt-4'>
+      <div className='flex-1 px-8 flex flex-col gap-4 mt-4'>
         <div className='w-full flex justify-between items-center'>
         <h1 className='font-bold text-lg'>Suggested Places:</h1>
         </div>
 
-        <div className='flex flex-wrap gap-4'>
+        <div className='flex flex-wrap gap-4 justify-center'>
         {!isLoading && filterData?.map((item:any,idx:number) =>{
           const rating = CalculateRating(item.reviews) || 0
-          const isIn = list?.itinerary?.find((i: { id: string; }) => i.id === item.id)
+          const isIn = list?.itinerary?.find((i: { id: string;isDeleted:boolean }) => i.id === item.id && item.isDeleted)
           return isIn ? null : (
-          <div onClick={() =>handleCheckboxChange(item)} key={idx} className='w-[230px] h-[330px] flex flex-col flex-wrap shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_1px_1px_-0.5px_rgba(0,0,0,0.06),0px_3px_3px_-1.5px_rgba(0,0,0,0.06),_0px_6px_6px_-3px_rgba(0,0,0,0.06),0px_12px_12px_-6px_rgba(0,0,0,0.06),0px_24px_24px_-12px_rgba(0,0,0,0.06)] '>
+          <div onClick={() =>handleCheckboxChange(item)} key={idx} className='w-[200px] h-[330px] flex flex-col flex-wrap shadow-[0px_0px_0px_1px_rgba(0,0,0,0.06),0px_1px_1px_-0.5px_rgba(0,0,0,0.06),0px_3px_3px_-1.5px_rgba(0,0,0,0.06),_0px_6px_6px_-3px_rgba(0,0,0,0.06),0px_12px_12px_-6px_rgba(0,0,0,0.06),0px_24px_24px_-12px_rgba(0,0,0,0.06)] '>
             <div className='rounded-t-lg relative'>
-              <Image src={(item && item?.photos?.length > 0) ? item.photos[0] : ''} alt={item.name} width={230} height={150} className='rounded-t-lg'/>
+              <Image src={(item && item?.photos?.length > 0) ? item.photos[0] : ''} alt={item.name} width={200} height={150} className='rounded-t-lg max-w-full object-fill'/>
               <p className='absolute bottom-4 bg-white/60 px-2 left-2'>{item.name}</p>
             </div>
-            <div className='pl-2 flex flex-col gap-2 '>
+            <div className='w-full pl-2 flex flex-col gap-2 '>
               <div className='flex h-16'>
               {(item.location && item.address) && <div className='flex flex-col h-full'>
               <p className='line-clamp-1'><span className='font-semibold'>Location: </span>{item.location}</p>

@@ -155,9 +155,9 @@ export const TravelProfile = () => {
     console.log(e);
   };
   return (
-    <div className='flex gap-16'>
+    <div className='flex flex-wrap flex-col sm:flex-row gap-2'>
       <Form  onFinish={handleFormSubmit}
-      className='p-8 flex flex-col items-center w-[700px]'>
+      className='p-2 sm:p-8 w-full flex flex-col items-center justify-top w-full sm:w-[700px]'>
         <div className='flex flex-col items-center justify-center'>
         {changeLogo ? <ImgCrop rotationSlider>
         <Upload className='relative' 
@@ -190,36 +190,35 @@ export const TravelProfile = () => {
             onClick={() => setChangeLogo(!changeLogo)}
           />          
         </div>
-        <div className='flex flex-col'>
-          <div className=' h-max p-4 flex gap-4'>
-            <div>
-            <div className='flex flex-col'>
+        <div className='w-full flex flex-col'>
+          <div className='w-full h-max p-4 flex flex-wrap flex-col sm:flex-row'>
+            <div className='w-full sm:w-1/2 flex flex-wrap flex-col'>
+            <div className='flex-1 flex flex-col'>
             <label htmlFor="">First Name</label>
-            <Input className='w-72' size='large' name="firstName" value={formData.firstName} onChange={handleChange}/>
+            <Input className='w-full sm:w-72' size='large' name="firstName" value={formData.firstName} onChange={handleChange}/>
             </div>
-            <div className='flex flex-col'>
+            <div className='flex-1 flex flex-col'>
             <label htmlFor="">Last Name</label>
-            <Input className='w-72' size='large' name="lastName" value={formData.lastName} onChange={handleChange}/>
+            <Input className='w-full sm:w-72' size='large' name="lastName" value={formData.lastName} onChange={handleChange}/>
             </div>
-            <div className='flex flex-col'>
+            <div className='flex-1 flex flex-col'>
             <label htmlFor="">Birthday</label>
-            <Input className='w-72' size='large' value={new Date(traveller.info.birthDate).toLocaleDateString()} readOnly/>
+            <Input className='w-full sm:w-72' size='large' value={new Date(traveller.info.birthDate).toLocaleDateString()} readOnly/>
             </div>
             </div>
-            <div>
-            <div className='flex flex-col'>
+            <div className='w-full sm:w-1/2 flex flex-wrap flex-col'>
+            <div className='flex-1 flex flex-col'>
             <label htmlFor="">Address</label>
-            <Input className='w-72' size='large' value={traveller.info.address} readOnly/>
+            <Input className='w-full sm:w-72' size='large' value={traveller.info.address} readOnly/>
             </div>
-            <div className='flex flex-col'>
+            <div className='flex-1 flex flex-col'>
             <label htmlFor="">Email</label>
-            <Input className='w-72' size='large' value={traveller.info.email} readOnly/>
+            <Input className='w-full sm:w-72' size='large' value={traveller.info.email} readOnly/>
             </div>
             </div>
-
           </div>
           <div className='p-4 flex flex-col gap-4'>
-            <div className='flex'>
+            <div className='flex justify-center items-center'>
             <CustomButton
               children='Edit & Save'
               classes='bg-sky-700 text-white  hover:opacity-90 m-4 w-32'
@@ -242,7 +241,6 @@ export const TravelProfile = () => {
             />  
             </Popconfirm>
             </div>
-      
           </div>
         </div>
       </Form>
@@ -266,7 +264,7 @@ export const TravelProfile = () => {
               )}
             />
         </div>
-        <div className="container mx-auto py-2">
+        <div className="container py-2">
           <h1 className="text-xl font-bold mb-4">Emergency Hotlines</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {hotlines.map((hotline, index) => (

@@ -69,9 +69,9 @@ export const TravelDashboard = () => {
     setSearchQuery(res);
   }, [allPost.post]);
   return (
-    <div className='w-full flex flex-col sm:flex-row flex-nowrap justify-between overflow-x-auto'>
-      <div className='w-[850px] md:w-[1000px] flex flex-col'>
-        <div className='p-4 relative'> 
+    <div className='w-full flex flex-wrap flex-col sm:flex-col lg:flex-row justify-between overflow-x-auto'>
+      <div className='w-full lg:w-[750px] xl:w-[1000px] flex flex-col'>
+        <div className='w-full p-4 relative'> 
         <Search allowClear placeholder="Search product name..." onChange={useDebounce(onSetFilter)}  style={{ width: 400 }} />
         <div className="absolute z-50 bg-white px-4 py-2 w-[400px] flex flex-col gap-2">
           {searchQuery && searchQuery?.map((data:any,idx) =>{
@@ -80,22 +80,39 @@ export const TravelDashboard = () => {
           )})}
         </div>
         </div>
-        <div className='px-8 flex flex-col'>
+        <div className='px-4 sm:px-8 flex flex-col'>
         <div>
             <h1 className='font-bold text-3xl'>Beach & Resorts</h1>
-            <div className='w-[800px] p-4'>
+            <div id="user" className='w-full p-4'>
             <Swiper
               ref={swiperRef}
-              slidesPerView={3}
-              spaceBetween={0}
+              slidesPerView={1}
+              spaceBetween={10}
+              breakpoints={{
+                640: {
+                  slidesPerView: 2,
+                  spaceBetween: 20,
+                },
+                768: {
+                  slidesPerView: 3,
+                  spaceBetween: 40,
+                },
+                1024: {
+                  slidesPerView: 3,
+                  spaceBetween: 30,
+                },
+              }}
               navigation={true}
               modules={[Pagination, Navigation]}
+              pagination={{
+                clickable: true,
+              }}
               className=''
             >
              {allPost?.businessType?.beachResorts?.map((item:any,idx:number) =>(
               <SwiperSlide className=''>
-              <SwiperSlide className=''>
-                <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
+              <SwiperSlide>
+                <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-full bg-white cursor-pointer rounded-lg relative'>
                 <div className='relative'>
                 <img 
                 src={item.photos[0]} 
@@ -112,18 +129,34 @@ export const TravelDashboard = () => {
           </div>
           <div>
             <h1 className='font-bold text-3xl'>Hotel and Room</h1>
-            <div className='w-[800px] p-4'>
+            <div id="user" className='w-full p-4'>
             {allPost?.businessType?.hotelRoom?.length > 0 ? <Swiper
               ref={swiperRef}
-              slidesPerView={3}
-              spaceBetween={0}
+              slidesPerView={1}
+              spaceBetween={10}
+              breakpoints={{
+                640: {
+                  slidesPerView: 2,
+                  spaceBetween: 20,
+                },
+                768: {
+                  slidesPerView: 3,
+                  spaceBetween: 40,
+                },
+                1024: {
+                  slidesPerView: 3,
+                  spaceBetween: 30,
+                },
+              }}
               navigation={true}
               modules={[Pagination, Navigation]}
-              className=''
+              pagination={{
+                clickable: true,
+              }}
             >
              {allPost?.businessType?.hotelRoom?.map((item:any,idx:number) =>(
-              <SwiperSlide className=''>
-                <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
+              <SwiperSlide>
+                <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-full  bg-white cursor-pointer rounded-lg relative'>
                 <div className='relative'>
                 <img 
                 src={item.photos[0]} 
@@ -139,18 +172,34 @@ export const TravelDashboard = () => {
           </div>
           <div>
             <h1 className='font-bold text-3xl'>Foods and Restaurant</h1>
-            <div className='w-[800px] p-4'>
+            <div id="user" className='w-full p-4'>
             {allPost?.businessType?.foodRestaurant?.length > 0 ? <Swiper
               ref={swiperRef}
-              slidesPerView={3}
-              spaceBetween={0}
+              slidesPerView={1}
+              spaceBetween={10}
+              breakpoints={{
+                640: {
+                  slidesPerView: 2,
+                  spaceBetween: 20,
+                },
+                768: {
+                  slidesPerView: 3,
+                  spaceBetween: 40,
+                },
+                1024: {
+                  slidesPerView: 3,
+                  spaceBetween: 30,
+                },
+              }}
               navigation={true}
               modules={[Pagination, Navigation]}
-              className=''
+              pagination={{
+                clickable: true,
+              }}
             >
              {allPost?.businessType?.foodRestaurant?.map((item:any,idx:number) =>(
               <SwiperSlide className=''>
-                <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
+                <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-full bg-white cursor-pointer rounded-lg relative'>
                 <div className='relative'>
                 <img 
                 src={item.photos[0]} 
@@ -166,18 +215,34 @@ export const TravelDashboard = () => {
           </div>
           <div>
             <h1 className='font-bold text-3xl'>Tourist Spots</h1>
-            <div className='w-[800px] p-4'>
+            <div id="user" className='w-full p-4'>
             {allPost?.businessType?.touristSpots?.length > 0 ? <Swiper
               ref={swiperRef}
-              slidesPerView={3}
-              spaceBetween={0}
+              slidesPerView={1}
+              spaceBetween={10}
+              breakpoints={{
+                640: {
+                  slidesPerView: 2,
+                  spaceBetween: 20,
+                },
+                768: {
+                  slidesPerView: 3,
+                  spaceBetween: 40,
+                },
+                1024: {
+                  slidesPerView: 3,
+                  spaceBetween: 30,
+                },
+              }}
               navigation={true}
               modules={[Pagination, Navigation]}
-              className=''
+              pagination={{
+                clickable: true,
+              }}
             >
              {allPost?.businessType?.touristSpots?.map((item:any,idx:number) =>(
               <SwiperSlide className=''>
-                <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-[222.5px] h-[150px] bg-white cursor-pointer rounded-lg relative'>
+                <a href={`/UserDashBoard/HomePage/${item.type}/${item.name}`}  key={idx} className='w-full bg-white cursor-pointer rounded-lg relative'>
                 <div className='relative'>
                 <img 
                 src={item.photos[0]} 
@@ -193,7 +258,7 @@ export const TravelDashboard = () => {
           </div>
         </div>
       </div>
-      <div className='w-[500px] overflow-hidded p-8'>
+      <div className='flex-1 overflow-hidded p-8'>
         <div className='shadow-border h-[670px] p-4 overflow-y-auto'>
             <h1 className='font-bold text-3xl'>Event/Announcements</h1>
             <List

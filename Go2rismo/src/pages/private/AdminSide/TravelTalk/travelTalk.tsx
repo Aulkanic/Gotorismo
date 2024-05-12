@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react'
+import { Key, useEffect, useState } from 'react'
 import { saveAllPostAdmin, selector } from '../../../../zustand/store/store.provide';
 import { fetchData } from '../../../../hooks/useFetchData';
 import CustomTable from '../../../../components/Table';
 import useStore from '../../../../zustand/store/store';
 import { currencyFormat } from '../../../../utils/utils';
 import { updateData } from '../../../../hooks/useUpdateData';
-import { Button, Form, Input, Modal, Select, Upload, message, notification } from 'antd';
+import { Button, Form, Input, InputNumber, Modal, Select, Upload, message, notification } from 'antd';
 import { CustomButton } from '../../../../components/Button/CustomButton';
 import { addData } from '../../../../hooks/useAddData';
 import { uploadImageToStorage } from '../../../../config/uploadFile';
@@ -20,10 +20,32 @@ export const AdminTalk = () => {
   const allPost = useStore(selector('admin'))
   const [initLoading, setInitLoading] = useState(false);
   const [open,setOpen] = useState(false)
+  const [act,setAct] = useState('')
   const [api, contextHolder] = notification.useNotification();
+  const [postId,setPostId] = useState('')
+  const [existingImages, setExistingImages] = useState<(string | ArrayBuffer | { file: any; originFileObj: any; } | null | undefined)[]>([]);
 
+  const handleRemovePhoto = (indexToRemove: any) => {
+    const updatedPhotos = existingImages.filter((_: any, index: any) => index !== indexToRemove);
+    setExistingImages(updatedPhotos)
+  };
+
+  const handleAddPhoto = (image:any) => {
+    console.log(image)
+    if(image.fileList.length > 0){
+      setExistingImages([...existingImages, {file:image.file,originFileObj:image.fileList[0].originFileObj}]);
+    }
+  }; 
+  
   const onFinish = async(values: any) => {
-    try {    
+    try { 
+      setInitLoading(true)
+      notification.info({
+        message: 'The task is being executed. Please wait until it is complete',
+      });
+      setOpen(false)
+      let imageUrl: string[] | undefined;
+       if(act === 'add'){
         const Photos = values.photos;
         if(!Array.isArray(Photos)){
             api.error({
@@ -32,16 +54,36 @@ export const AdminTalk = () => {
             })
             return
         }
-        setInitLoading(true)
-        notification.info({
-          message: 'The task is being executed. Please wait until it is complete',
-        });
         const uploading = Photos?.map(async (file:any) => {
-            const filePath = `businessGallery/${file.name}_${allPost.info.id}`;
+          const filePath = `businessGallery/${file.name}_${allPost.info.id}`;
+          const upload = await uploadImageToStorage(file.originFileObj,filePath)
+          return upload
+        })
+        imageUrl = await Promise.all(uploading)
+       }
+       if(act === 'edit'){
+         if(existingImages.length === 0){
+          api.error({
+            message:'No Image Uploaded!',
+          })
+          return
+         }
+         if(!postId){
+          api.error({message:"Invalid Post ID"})
+          return
+         }
+         const uploading = existingImages?.map(async (file:any) => {
+          if(typeof file === 'string'){
+            return file
+          }else{
+            const currentDatetime = new Date().toISOString().replace(/[-:.]/g, '');
+            const filePath = `businessGallery/${currentDatetime}_${allPost.info.id}`;
             const upload = await uploadImageToStorage(file.originFileObj,filePath)
             return upload
+          }
         })
-        const imageUrl = await Promise.all(uploading)
+        imageUrl = await Promise.all(uploading)
+       }
         const dataToSend = typeSelected === 'Tourist Spots' ? {
         name:values.name,
         location: values.location,
@@ -62,22 +104,23 @@ export const AdminTalk = () => {
             photos:imageUrl,
             isDeleted:false
         }
-        const response = await addData('tbl_postList',dataToSend)
-        if(response){
+         act === 'add' ? await addData('tbl_postList',dataToSend) : await updateData('tbl_postList',postId,dataToSend)
           Fetch()
           setInitLoading(false)
           notification.success({
-              message: 'New Record added successfully'
+              message: act === 'add' ? 'New Record added successfully' : 'Record updated successfully'
           });
           form.resetFields();
-        }
-         
-
+          setPostId('')
+          setExistingImages([])
+        
   } catch (error) {
+    console.log(error)
       api.error({
           message:'Form Submission',
           description: 'Failed to submit form. Please try again later.',
       })
+      setInitLoading(false)
   }
   };
   const onFinishFailed = (errorInfo: any) => {
@@ -102,6 +145,28 @@ export const AdminTalk = () => {
     Fetch()
   },[])
 
+  const modalOpen = (act:string,data?:any) =>{
+    if(data){
+      console.log(data)
+      const { photos, ...formData } = data
+      form.setFieldsValue(formData)
+      setPostId(data.id)
+      console.log(photos)
+      if (photos) {
+        setExistingImages(photos);
+      } else {
+        setExistingImages([]); // Clear existing images
+      }
+    }
+    setAct(act)
+    setOpen(true)
+  }
+  const modalClose = () =>{
+    form.resetFields();
+    setPostId('')
+    setExistingImages([])
+    setOpen(false)
+  }
   const validateLocation = (_rule: any, value: string, callback: any) => {
     if (!value) {
       callback('Please select a location!');
@@ -117,6 +182,7 @@ export const AdminTalk = () => {
     }
   };
 
+  
   const handleDisable = async(data:any) => {
     setInitLoading(true)
     await updateData('tbl_postList',data.id,{isDeleted:true})
@@ -181,9 +247,15 @@ export const AdminTalk = () => {
       render: (data:any) => (
         <div className='flex gap-4'>
         <CustomButton
-          children='Delete this post'
+          children='Edit'
+          onClick={() =>modalOpen('edit',data)}
+          classes='w-24 bg-sky-600 text-white'
+        />
+        <CustomButton
+          children='Delete'
           danger
           onClick={() =>handleDisable(data)}
+          classes='w-24'
         />
         </div>
       ),
@@ -202,15 +274,15 @@ export const AdminTalk = () => {
     onFinishFailed={onFinishFailed}
     autoComplete="off"
     >
-        <h3 className=' font-bold text-3xl mb-4'>Add Post</h3>
         <div className='flex gap-2 w-full flex-wrap'>
-            <div className='flex-1'>
-            <Form.Item
-            label="Type:"
-            name="type"
-            className='mb-2'
-            rules={[{ required: true, message: 'Please select  type!' }]}
-            >
+            <div className='flex-1 flex flex-col flex-wrap'>
+              <div className='flex flex-1 gap-4'>
+              <Form.Item
+              label="Type:"
+              name="type"
+              className='mb-2 w-full'
+              rules={[{ required: true, message: 'Please select  type!' }]}
+              >
               <Select 
               allowClear
               >
@@ -221,85 +293,86 @@ export const AdminTalk = () => {
                   <Select.Option value="Food & Restaurant">Food & Restaurant</Select.Option>
               </Select>
             </Form.Item>
-            <Form.Item
-            label="Name"
-            name="name"
-            className='mb-2'
-            rules={[{ required: true, message: 'Please provide name!' }]}
-            >
-            <Input />
-            </Form.Item>
-            <Form.Item
-            label="Location"
-            name="location"
-            className='mb-2'
-            rules={[{ required: true, message: 'Please provide location!', validator: validateLocation }]}
-            >
-              <Select 
+              <Form.Item
+                label="Name"
+                name="name"
+                className='mb-2 w-full'
+                rules={[{ required: true, message: 'Please provide name!' }]}
+                >
+                <Input />
+              </Form.Item>
+              </div>
+              <div className='flex flex-1 gap-4'>
+              <Form.Item
+              label="Location"
+              name="location"
+              className='mb-2 w-full'
+              rules={[{ required: true, message: 'Please provide location!', validator: validateLocation }]}
               >
-                  <Select.Option value="">-select location-</Select.Option>
-                  <Select.Option value="Alcantara">Alcantara</Select.Option>
-                  <Select.Option value="Alcoy">Alcoy</Select.Option>
-                  <Select.Option value="Alegria">Alegria</Select.Option>
-                  <Select.Option value="Aloguinsan">Aloguinsan</Select.Option>
-                  <Select.Option value="Argao">Argao</Select.Option>
-                  <Select.Option value="Asturias">Asturias</Select.Option>
-                  <Select.Option value="Badian">Badian</Select.Option>
-                  <Select.Option value="Balamban">Balamban</Select.Option>
-                  <Select.Option value="Bantayan">Bantayan</Select.Option>
-                  <Select.Option value="Barili">Barili</Select.Option>
-                  <Select.Option value="Bogo City">Bogo City</Select.Option>
-                  <Select.Option value="Boljoon">Boljoon</Select.Option>
-                  <Select.Option value="Borbon">BorbonBorbon</Select.Option>
-                  <Select.Option value="Carmen">CarmenCarmen</Select.Option>
-                  <Select.Option value="Catmon">Catmon</Select.Option>
-                  <Select.Option value="Compostela">Compostela</Select.Option>
-                  <Select.Option value="Consolacion">Consolacion</Select.Option>
-                  <Select.Option value="Cordova">Cordova</Select.Option>
-                  <Select.Option value="Daanbantayan">Daanbantayan</Select.Option>
-                  <Select.Option value="Danao City">Danao City</Select.Option>
-                  <Select.Option value="Dalaguete">Dalaguete</Select.Option>
-                  <Select.Option value="Dumanjug">Dumanjug</Select.Option>
-                  <Select.Option value="Ginatilan">Ginatilan</Select.Option>
-                  <Select.Option value="Lapu-Lapu City">Lapu-Lapu City</Select.Option>
-                  <Select.Option value="Liloan">Liloan</Select.Option>
-                  <Select.Option value="Madridejos">Madridejos</Select.Option>
-                  <Select.Option value="Mandaue City">Mandaue City</Select.Option>
-                  <Select.Option value="Malabuyoc">Malabuyoc</Select.Option>
-                  <Select.Option value="Medellin">Medellin</Select.Option>
-                  <Select.Option value="Minglanilla">Minglanilla</Select.Option>
-                  <Select.Option value="Moalboal">Moalboal</Select.Option>
-                  <Select.Option value="Naga City">Naga City</Select.Option>
-                  <Select.Option value="Oslob">Oslob</Select.Option>
-                  <Select.Option value="Pilar">Pilar</Select.Option>
-                  <Select.Option value="Pinamungajan">Pinamungajan</Select.Option>
-                  <Select.Option value="Poro">Poro</Select.Option>
-                  <Select.Option value="Ronda">Ronda</Select.Option>
-                  <Select.Option value="Samboan">Samboan</Select.Option>
-                  <Select.Option value="San Fernando">San Fernando</Select.Option>
-                  <Select.Option value="San Francisco">San Francisco</Select.Option>
-                  <Select.Option value="San Remigio">San Remigio</Select.Option>
-                  <Select.Option value="Santa Fe">Santa Fe</Select.Option>
-                  <Select.Option value="Santander">Santander</Select.Option>
-                  <Select.Option value="Sibonga">Sibonga</Select.Option>
-                  <Select.Option value="Sogod">Sogod</Select.Option>
-                  <Select.Option value="Tabogon">Tabogon</Select.Option>
-                  <Select.Option value="Tabuelan">Tabuelan</Select.Option>
-                  <Select.Option value="Talisay City">Talisay City</Select.Option>
-                  <Select.Option value="Toledo City">Toledo City</Select.Option>
-                  <Select.Option value="Tuburan">Tuburan</Select.Option>
-                  <Select.Option value="Tudela">Tudela</Select.Option>
-              </Select>
-            </Form.Item>
-            <div>
-            <Form.Item
-            label="Address"
-            name="address"
-            className='mb-2'
-            rules={[{ required: true, message: 'Please provide address!' }]}
-            >
-            <Input />
-            </Form.Item>
+                <Select 
+                >
+                    <Select.Option value="">-select location-</Select.Option>
+                    <Select.Option value="Alcantara">Alcantara</Select.Option>
+                    <Select.Option value="Alcoy">Alcoy</Select.Option>
+                    <Select.Option value="Alegria">Alegria</Select.Option>
+                    <Select.Option value="Aloguinsan">Aloguinsan</Select.Option>
+                    <Select.Option value="Argao">Argao</Select.Option>
+                    <Select.Option value="Asturias">Asturias</Select.Option>
+                    <Select.Option value="Badian">Badian</Select.Option>
+                    <Select.Option value="Balamban">Balamban</Select.Option>
+                    <Select.Option value="Bantayan">Bantayan</Select.Option>
+                    <Select.Option value="Barili">Barili</Select.Option>
+                    <Select.Option value="Bogo City">Bogo City</Select.Option>
+                    <Select.Option value="Boljoon">Boljoon</Select.Option>
+                    <Select.Option value="Borbon">BorbonBorbon</Select.Option>
+                    <Select.Option value="Carmen">CarmenCarmen</Select.Option>
+                    <Select.Option value="Catmon">Catmon</Select.Option>
+                    <Select.Option value="Compostela">Compostela</Select.Option>
+                    <Select.Option value="Consolacion">Consolacion</Select.Option>
+                    <Select.Option value="Cordova">Cordova</Select.Option>
+                    <Select.Option value="Daanbantayan">Daanbantayan</Select.Option>
+                    <Select.Option value="Danao City">Danao City</Select.Option>
+                    <Select.Option value="Dalaguete">Dalaguete</Select.Option>
+                    <Select.Option value="Dumanjug">Dumanjug</Select.Option>
+                    <Select.Option value="Ginatilan">Ginatilan</Select.Option>
+                    <Select.Option value="Lapu-Lapu City">Lapu-Lapu City</Select.Option>
+                    <Select.Option value="Liloan">Liloan</Select.Option>
+                    <Select.Option value="Madridejos">Madridejos</Select.Option>
+                    <Select.Option value="Mandaue City">Mandaue City</Select.Option>
+                    <Select.Option value="Malabuyoc">Malabuyoc</Select.Option>
+                    <Select.Option value="Medellin">Medellin</Select.Option>
+                    <Select.Option value="Minglanilla">Minglanilla</Select.Option>
+                    <Select.Option value="Moalboal">Moalboal</Select.Option>
+                    <Select.Option value="Naga City">Naga City</Select.Option>
+                    <Select.Option value="Oslob">Oslob</Select.Option>
+                    <Select.Option value="Pilar">Pilar</Select.Option>
+                    <Select.Option value="Pinamungajan">Pinamungajan</Select.Option>
+                    <Select.Option value="Poro">Poro</Select.Option>
+                    <Select.Option value="Ronda">Ronda</Select.Option>
+                    <Select.Option value="Samboan">Samboan</Select.Option>
+                    <Select.Option value="San Fernando">San Fernando</Select.Option>
+                    <Select.Option value="San Francisco">San Francisco</Select.Option>
+                    <Select.Option value="San Remigio">San Remigio</Select.Option>
+                    <Select.Option value="Santa Fe">Santa Fe</Select.Option>
+                    <Select.Option value="Santander">Santander</Select.Option>
+                    <Select.Option value="Sibonga">Sibonga</Select.Option>
+                    <Select.Option value="Sogod">Sogod</Select.Option>
+                    <Select.Option value="Tabogon">Tabogon</Select.Option>
+                    <Select.Option value="Tabuelan">Tabuelan</Select.Option>
+                    <Select.Option value="Talisay City">Talisay City</Select.Option>
+                    <Select.Option value="Toledo City">Toledo City</Select.Option>
+                    <Select.Option value="Tuburan">Tuburan</Select.Option>
+                    <Select.Option value="Tudela">Tudela</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+              label="Address"
+              name="address"
+              className='mb-2 w-full'
+              rules={[{ required: true, message: 'Please provide address!' }]}
+              >
+              <Input />
+              </Form.Item>
             </div>
             {typeSelected !== 'Tourist Spots' && <Form.Item
             label="Price"
@@ -307,7 +380,7 @@ export const AdminTalk = () => {
             className='mb-2'
             rules={[{ required: true, message: 'Please provide price!' }]}
             >
-            <Input />
+            <InputNumber min={1} className='w-full' />
             </Form.Item>}
             <Form.Item
             label="Description"
@@ -317,30 +390,49 @@ export const AdminTalk = () => {
             >
             <TextArea rows={4} />
             </Form.Item>
-            <Form.Item label="Photos" name='photos' valuePropName="fileList" getValueFromEvent={normFile}>
-            <Upload action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188" multiple listType="picture" maxCount={3}>
+            {act === 'add' ? <Form.Item label="Photos" name='photos' valuePropName="fileList" getValueFromEvent={normFile}>
+            <Upload beforeUpload={() => false} action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188" multiple listType="picture" maxCount={5}>
             <Button className='w-full bg-white' icon={<UploadOutlined />}>Upload here</Button>
             </Upload>
-            </Form.Item>
+            </Form.Item> : 
+            <Form.Item label="Add Images:" name='photos' valuePropName="fileList" getValueFromEvent={normFile}>
+            <Upload beforeUpload={() => false} onChange={handleAddPhoto} action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188" showUploadList={false} multiple maxCount={5}>
+              <Button className='w-full bg-white' icon={<UploadOutlined />}>Add Image</Button>
+            </Upload>
+            <p className='mt-4 mb-0'>Images list:</p>
+            {existingImages && existingImages.length > 0 && (
+              <div className='w-full flex flex-wrap gap-4'>
+                {existingImages?.map((photo: any, index: Key | null | undefined) => {
+                  const imgSrc = typeof photo === 'string' ? photo : URL.createObjectURL(photo.file);
+                  return(
+                  <div key={index} className="w-max flex flex-col gap-2 mt-2">
+                    <img src={imgSrc} alt={`Image ${index}`} style={{ width: 100, height: 100, marginRight: 10 }} />
+                    <Button onClick={() => handleRemovePhoto(index)}>Remove</Button>
+                  </div>
+                )})}
+              </div>
+            )}
+          </Form.Item>}
             </div>
         </div>
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }} className='flex justify-end items-end mr-20'>
+        <div className='flex justify-end items-end'>
         <CustomButton
-            children={'Add'}
+            children={act === 'add' ? 'Add'  : 'Save'}
             type='primary'
             htmlType='submit'
             loading={initLoading}
             classes='w-32 rounded-xl'
           />
-        </Form.Item>
+        </div>
     </Form> 
   )
+  console.log(existingImages)
   return (
-    <div>
+    <div className='p-8'>
       <div className='flex justify-end items-end p-4'>
         <CustomButton
           children='Add post'
-          onClick={() =>setOpen(true)}
+          onClick={() =>modalOpen('add')}
         />
       </div>
       <CustomTable
@@ -350,8 +442,10 @@ export const AdminTalk = () => {
       />
       <Modal
       open={open}
-      onCancel={()=>setOpen(false)}
+      onCancel={()=>modalClose()}
       footer={null}
+      width={800}
+      title={act === 'add' ? 'Add Post' : 'Edit Post'}
       >
       {renderModalContent()}
     </Modal>
