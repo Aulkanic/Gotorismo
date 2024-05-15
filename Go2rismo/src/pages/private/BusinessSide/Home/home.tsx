@@ -73,7 +73,7 @@ export const BusinessDashboard = () => {
     <div className='w-full flex flex-nowrap overflow-x-auto'>
       <div className='w-[850px]'>
        <div className='p-4 w-96 relative'> 
-        <Search placeholder="Search product name..." onChange={useDebounce(onSetFilter)}  />
+        <Search placeholder="Search post name..." onChange={useDebounce(onSetFilter)}  />
         <div className="absolute z-50 bg-white px-4 py-2 w-full flex flex-col gap-2">
           {searchQuery?.map((data:any,idx) =>{
             return(

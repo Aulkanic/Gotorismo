@@ -33,7 +33,9 @@ export const AdminTalk = () => {
   const handleAddPhoto = (image:any) => {
     console.log(image)
     if(image.fileList.length > 0){
-      setExistingImages([...existingImages, {file:image.file,originFileObj:image.fileList[0].originFileObj}]);
+      const lastIndex = image.fileList.length - 1;
+      const newImage = image.fileList[lastIndex];
+      setExistingImages([...existingImages, {file:image.file,originFileObj:newImage.originFileObj}]);
     }
   }; 
   

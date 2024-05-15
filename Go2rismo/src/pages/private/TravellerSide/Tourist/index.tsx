@@ -171,21 +171,21 @@ export default function TouristSelected() {
     const rating = details[0]?.reviews ? CalculateRating(details[0].reviews) : 0;
     const favs = allPost.favorites ? allPost.favorites?.map((item:any)=> item.favorites[0].id) || [] : null
   return (
-    <div className='pt-8 flex flex-nowrap'>
-      <div className='pl-8 w-1/2'>
+    <div className='pt-8 px-4 flex flex-col sm:flex-row flex-wrap'>
+      <div className='sm:pl-8 w-full sm:flex-1'>
         <div className='flex flex-col gap-4'>
           <h1 className='text-3xl font-bold'>{type}</h1>
-          <div>
+          <div className='w-full flex justify-center h-max'>
           <Image.PreviewGroup items={details[0].photos?.map((item:any) => item)}>
-            <Image width={600} height={400} className='w-20 aspect-square rounded-md' src={details[0].photos[0]} alt="" />
+            <Image className='w-full  h-[600px] rounded-sm object-fill' src={details[0].photos[0]} alt="" />
           </Image.PreviewGroup>
           </div>
         </div>
-        <div className='mt-2'>
-          <div className='w-full flex justify-between'>
+        <div className='flex flex-wrap mt-2'>
+          <div className='w-full flex flex-wrap justify-between'>
             <h1 className='text-3xl'>{name}</h1>
-            <div className='flex gap-4'>
-              <div>
+            <div className='flex flex-wrap gap-4'>
+              <div className='flex-1'>
               {(favs && favs?.find((item:any) => item === details[0].id)) ? <CustomButton
                 children={<div className='flex items-center gap-2 '><FaHeart /> <p>Favorites</p></div>}
                 classes='bg-sky-600 text-white w-max px-4'
@@ -198,7 +198,7 @@ export default function TouristSelected() {
               />              
               )}
               </div>
-              <div>
+              <div className='flex-1'>
                 {(details[0]?.type !== 'Food & Restaurant' || details[0]?.type !== 'Tourist Spots') && <CustomButton
                   children="Book Now"
                   onClick={showModal}
@@ -207,22 +207,20 @@ export default function TouristSelected() {
             </div>
 
           </div>
-          <div>
+          <div className='flex-1'>
             <p>{details[0].location}</p>
             <p>{details[0].address}</p>
           <Rate allowHalf defaultValue={rating} disabled />
           <p>{currencyFormat(details[0].price || 0)}</p>
           </div>
         </div>
-        <div>
-        </div>
       </div>
-      <div className='p-8 flex flex-col gap-8'>
-        <div className='min-w-[600px] w-full h-60 p-4 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]'>
+      <div className='p-4 sm:p-8 w-full sm:flex-1 flex flex-col gap-8'>
+        <div className='w-full min-h-60 p-4 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]'>
           <h1 className='font-semibold'>Description</h1>
           <p>{details[0].description}</p>
         </div>
-        <div className='px-4 py-2 w-full h-max shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]'>
+        <div className='px-2 sM:px-4 py-2 w-full h-max shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]'>
           <div className='flex justify-between items-center'>
           <h1>Customer Reviews:</h1>
           <CustomButton

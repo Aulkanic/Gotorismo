@@ -41,7 +41,9 @@ export const MyBusiness = () => {
   const handleAddPhoto = (image:any) => {
     console.log(image)
     if(image.fileList.length > 0){
-      setExistingImages([...existingImages, {file:image.file,originFileObj:image.fileList[0].originFileObj}]);
+      const lastIndex = image.fileList.length - 1;
+      const newImage = image.fileList[lastIndex];
+      setExistingImages([...existingImages, {file:image.file,originFileObj:newImage.originFileObj}]);
     }
   }; 
   const modalOpen = (act:string,data?:any) =>{
@@ -129,7 +131,7 @@ export const MyBusiness = () => {
                 return file
               }else{
                 const currentDatetime = new Date().toISOString().replace(/[-:.]/g, '');
-                const filePath = `businessGallery/${currentDatetime}_${business.info.id}`;
+                const filePath = `businessGallery/${currentDatetime}${file.originFileObj.uid}_${business.info.id}`;
                 const upload = await uploadImageToStorage(file.originFileObj,filePath)
                 return upload
               }
@@ -507,6 +509,7 @@ export const MyBusiness = () => {
       ),
     },
   ];
+  console.log(existingImages)
   return (
     <div className='flex flex-wrap'>
       <div className='flex flex-1 h-max flex-col gap-4 p-8 mr-4 rounded-lg'>

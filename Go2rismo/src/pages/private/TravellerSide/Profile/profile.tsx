@@ -155,6 +155,7 @@ export const TravelProfile = () => {
     console.log(e);
   };
   return (
+    <>
     <div className='flex flex-wrap flex-col sm:flex-row gap-2'>
       <Form  onFinish={handleFormSubmit}
       className='p-2 sm:p-8 w-full flex flex-col items-center justify-top w-full sm:w-[700px]'>
@@ -264,9 +265,12 @@ export const TravelProfile = () => {
               )}
             />
         </div>
-        <div className="container py-2">
+      </div>
+    </div>
+    <div className='flex flex-col sm:flex-row flex-wrap gap-4 px-4 sm:px-8'>
+    <div className="flex-1 py-2">
           <h1 className="text-xl font-bold mb-4">Emergency Hotlines</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="flex flex-col gap-4">
             {hotlines.map((hotline, index) => (
               <div key={index} className="bg-white p-4 rounded shadow-md">
                 <h2 className="text-xl font-semibold mb-2">{hotline.name}</h2>
@@ -274,12 +278,10 @@ export const TravelProfile = () => {
               </div>
             ))}
           </div>
-        </div>
-        <div className="container mx-auto py-8">
+    </div>
+    <div className="flex-1 py-2">
       <h1 className="text-xl font-bold mb-4">Local Transportation Information</h1>
-      <div>
-        <h2 className="text-xl font-semibold mb-2">Fares</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="flex flex-col gap-4">
           {transportationData.map((transportation, index) => (
             <div key={index} className="bg-white p-4 rounded shadow-md">
               <h3 className="text-lg font-semibold mb-1">{transportation.mode}</h3>
@@ -287,9 +289,9 @@ export const TravelProfile = () => {
             </div>
           ))}
         </div>
-      </div>
     </div>
-      </div>
     </div>
+
+    </>
   )
 }
