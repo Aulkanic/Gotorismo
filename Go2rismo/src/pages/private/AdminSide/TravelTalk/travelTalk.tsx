@@ -91,7 +91,7 @@ export const AdminTalk = () => {
         location: values.location,
         type:values.type,
         description:values.description,
-        businessId:allPost.info.id,
+        businessId:allPost.info?.id,
         photos:imageUrl,
         address: values.address,
         isDeleted:false
@@ -101,7 +101,7 @@ export const AdminTalk = () => {
             type:values.type,
             price:values.price,
             description:values.description,
-            businessId:allPost.info.id,
+            businessId:allPost.info?.id,
             address: values.address,
             photos:imageUrl,
             isDeleted:false

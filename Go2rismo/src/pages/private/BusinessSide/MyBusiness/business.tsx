@@ -143,7 +143,7 @@ export const MyBusiness = () => {
             location: values.location,
             type:values.type,
             description:values.description,
-            businessId:business.info.id,
+            businessId:business.info?.id,
             photos:imageUrl,
             address: values.address,
             isDeleted:false
@@ -153,7 +153,7 @@ export const MyBusiness = () => {
                 type:values.type,
                 price:values.price,
                 description:values.description,
-                businessId:business.info.id,
+                businessId:business.info?.id,
                 address: values.address,
                 photos:imageUrl,
                 isDeleted:false
@@ -177,7 +177,7 @@ export const MyBusiness = () => {
             Title:values.name,
             Content: values.location,
             Date: new Date(Date.now()).toLocaleString(),
-            businessId:business.info.id,
+            businessId:business.info?.id,
         }
         await addData('tbl_announcements&Events',dataToSend)
           Fetch()
@@ -535,7 +535,7 @@ export const MyBusiness = () => {
         <CustomTable
         columns={columns}
         loading={isLoading}
-        datasource={business.businessList?.filter((item: { businessId: any; }) => item.businessId === business.info.id)}
+        datasource={business.businessList?.filter((item: { businessId: any; }) => item?.businessId === business.info?.id)}
         />
         </> : (
           <>
