@@ -88,7 +88,7 @@ export const MyBusiness = () => {
     const list1 = business.events
     const data1 = list1?.map((item:any) => ({...item,loading:false}))
     setList1(data1.slice(0, countPerPage))
-  },[business.businessList, business.events, business.info.id])
+  },[business.businessList, business.events, business?.info?.id])
 
     const onFinish = async(values: any) => {
       try { 
@@ -432,7 +432,6 @@ export const MyBusiness = () => {
     </Form> 
   )
 
-
   const deletePost = async(data:any) =>{
     setIsLoading(true)
     await updateData('tbl_postList',data.id,{isDeleted:true})
@@ -509,7 +508,7 @@ export const MyBusiness = () => {
       ),
     },
   ];
-  console.log(existingImages)
+
   return (
     <div className='flex flex-wrap'>
       <div className='flex flex-1 h-max flex-col gap-4 p-8 mr-4 rounded-lg'>
