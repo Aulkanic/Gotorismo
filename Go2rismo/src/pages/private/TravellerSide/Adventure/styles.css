@@ -1,0 +1,22 @@
+.swiper {
+    width: 80%;
+    height: 80%;
+  }
+  
+#adv .swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    height: 100%;
+    display: flex;
+  } 
+
+  .swiper {
+    width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    /* Below the small breakpoint (640px), make width full */
+    #adv .swiper-slide {
+      width: 100% !important;
+    }
+  }

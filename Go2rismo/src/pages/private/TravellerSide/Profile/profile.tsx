@@ -4,7 +4,7 @@
 import { Avatar,Button,Form,Input, List, Popconfirm, Upload, message } from 'antd';
 import {  UserOutlined } from '@ant-design/icons';
 import useStore from '../../../../zustand/store/store';
-import { logoutTraveller, saveAllEventsForTraveller, saveTravellerInfo, selector } from '../../../../zustand/store/store.provide';
+import { logoutTraveller, saveAllEventsForTraveller, saveAllPost, saveTravellerInfo, selector } from '../../../../zustand/store/store.provide';
 import { CustomButton } from '../../../../components/Button/CustomButton';
 import { useEffect, useState } from 'react';
 import { updateData } from '../../../../hooks/useUpdateData';
@@ -16,6 +16,15 @@ import { fetchData, fetchDataById } from '../../../../hooks/useFetchData';
 import { T_Events } from '../../../../types';
 import { RouterUrl } from '../../../../routes';
 import { useNavigate } from 'react-router-dom';
+import { Swiper,SwiperSlide } from 'swiper/react';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/effect-fade';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import './styles.css';
+import { Navigation, Pagination } from 'swiper/modules';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -30,23 +39,13 @@ export const TravelProfile = () => {
   const [list, setList] = useState<T_Events[]>([])
   const countPerPage = 1;
 
-  const hotlines = [
-    { name: 'Police', number: '911' },
-    { name: 'Fire Department', number: '112' },
-    { name: 'Ambulance', number: '999' },
-    // Add more emergency contacts as needed
-  ];
-  const transportationData = [
-    { mode: 'Jeepney and E-jeep', fare: '$0.25 - $0.50' },
-    { mode: 'Bus', fare: '$0.50 - $1.50' },
-    { mode: 'Shipping', fare: 'Varies depending on destination' },
-    // Add more transportation modes as needed
-  ];
-
   async function Fetch(){
     setInitLoading(true);
+    const response = await fetchData('tbl_postList');
     const res =await fetchDataById('tbl_traveller',traveller.info.id)
     const res1 = await fetchData('tbl_announcements&Events')
+    response.shift()
+    saveAllPost(response)
     saveTravellerInfo(res)
     saveAllEventsForTraveller(res1)
     setInitLoading(false);
@@ -154,6 +153,7 @@ export const TravelProfile = () => {
   const cancel = (e?: React.MouseEvent<HTMLElement, MouseEvent> | undefined) => {
     console.log(e);
   };
+  console.log(traveller)
   return (
     <>
     <div className='flex flex-wrap flex-col sm:flex-row gap-2'>
@@ -267,29 +267,44 @@ export const TravelProfile = () => {
         </div>
       </div>
     </div>
-    <div className='flex flex-col sm:flex-row flex-wrap gap-4 px-4 sm:px-8'>
-    <div className="flex-1 py-2">
-          <h1 className="text-xl font-bold mb-4">Emergency Hotlines</h1>
-          <div className="flex flex-col gap-4">
-            {hotlines.map((hotline, index) => (
-              <div key={index} className="bg-white p-4 rounded shadow-md">
-                <h2 className="text-xl font-semibold mb-2">{hotline.name}</h2>
-                <p className="text-gray-600">{hotline.number}</p>
+    <div id='prf' className='flex flex-col sm:flex-row flex-wrap gap-4 px-4 sm:px-8 py-16'>
+      <p className='w-full text-left text-[25px] font-[700] text-[#060E61]'>Travel List</p>
+    <Swiper
+        navigation={true}
+        breakpoints={{
+          640: {
+            slidesPerView: 2,
+            spaceBetween: 20,
+          },
+          768: {
+            slidesPerView: 4,
+            spaceBetween: 20,
+          },
+          1024: {
+            slidesPerView: 4,
+            spaceBetween: 20,
+          },
+        }}
+        slidesPerView={1}
+        modules={[Pagination, Navigation]}
+        pagination={{
+          clickable: true,
+        }}
+      >
+        {traveller.post?.map((h:any,idx:number) =>{
+          return(
+          <SwiperSlide key={idx} className='h-full'>
+              <div onClick={() => navigate(`/UserDashBoard/HomePage/${h.type}/${h.name}`)} className='rounded-xl cursor-pointer h-full'>
+                
+                <div className='relative flex flex-col items-center justify-center w-full'>
+                  <img className='w-[200px] h-[150px]' src={h.photos[0] || ''} alt="" />
+                  <p className='absolute right-2 bottom-2 bg-white/50 font-[700] w-[70%] rounded-xl'>{h.name}</p>
+                </div>
+                {(h.location && h.address) && <p className='w-full text-left text-[14px] m-0 line-clamp-2'>Location: {h.address} {h.location}</p>}
               </div>
-            ))}
-          </div>
-    </div>
-    <div className="flex-1 py-2">
-      <h1 className="text-xl font-bold mb-4">Local Transportation Information</h1>
-        <div className="flex flex-col gap-4">
-          {transportationData.map((transportation, index) => (
-            <div key={index} className="bg-white p-4 rounded shadow-md">
-              <h3 className="text-lg font-semibold mb-1">{transportation.mode}</h3>
-              <p className="text-gray-600">{transportation.fare}</p>
-            </div>
-          ))}
-        </div>
-    </div>
+              </SwiperSlide>
+            )})}
+      </Swiper>
     </div>
 
     </>

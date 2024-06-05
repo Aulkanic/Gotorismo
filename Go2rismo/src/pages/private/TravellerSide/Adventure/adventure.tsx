@@ -12,6 +12,7 @@ import 'swiper/css';
 import 'swiper/css/effect-fade';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import './styles.css';
 import { Navigation, Pagination } from 'swiper/modules';
 
 export const TravelAdventure = () => {
@@ -28,30 +29,47 @@ export const TravelAdventure = () => {
    const travels =traveller?.itinerary?.length > 0 && traveller?.itinerary[0]?.itinerary?.length > 0 ? traveller?.itinerary[0]?.itinerary : []
    console.log(travels)
   return (
-    <div className='px-4 md:px-16 py-8'>
+    <div id='adv' className='px-4 md:px-16 py-8'>
       <p className='w-full text-center text-[25px] font-[700] text-[#060E61]'>My Adventure</p>
       <Swiper
-        effect={'fade'}
         navigation={true}
-        modules={[Navigation, Pagination]}
-        className="w-full sm:w-[700px] h-[485px] bg-white rounded-xl shadow-[0px_8px_5px_0px_#a0aec0]"
+        spaceBetween={30}
+        breakpoints={{
+          640: {
+            slidesPerView: 2,
+            spaceBetween: 20,
+          },
+          768: {
+            slidesPerView: 2,
+            spaceBetween: 40,
+          },
+          1024: {
+            slidesPerView: 2,
+            spaceBetween: 50,
+          },
+        }}
+        slidesPerView={1}
+        modules={[Pagination, Navigation]}
+        pagination={{
+          clickable: true,
+        }}
       >
         {travels?.map((h:any,idx:number) =>{
           return(
-          <SwiperSlide key={idx} className='px-16 py-8'>
-              <div onClick={() => navigate(`/UserDashBoard/HomePage/${h.type}/${h.name}`)} className='rounded-xl cursor-pointer w-full'>
+          <SwiperSlide key={idx} className='px-16 py-8 h-full'>
+              <div onClick={() => navigate(`/UserDashBoard/HomePage/${h.type}/${h.name}`)} className='rounded-xl cursor-pointer h-full'>
                 <p>{h.name}</p>
                 <div className='relative flex flex-col items-center justify-center w-full'>
                   <img className='w-full h-full' src={h.photos[0] || ''} alt="" />
                   {(h.location && h.address) && <p className='w-full text-left text-[14px] m-0'>Location: {h.address} {h.location}</p>}
                 </div>
-                <div className='w-full text-[15px] font-[400] line-clamp-5 flex justify-start text-left items-top rounded-b-xl'>
+                <div className='w-full h-full text-[15px] font-[400] line-clamp-5 flex justify-start text-left items-top rounded-b-xl'>
                   {h.description}
                 </div>
               </div>
               </SwiperSlide>
             )})}
-        </Swiper>
+      </Swiper>
     </div>
   )
 }
