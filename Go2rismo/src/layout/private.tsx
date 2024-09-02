@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { RouterUrl } from '../routes';
 import clsx from 'clsx';
 import Logo from '../../src/assets/app logo.png'

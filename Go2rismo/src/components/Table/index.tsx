@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
 import { Table } from 'antd';
 import { type ColumnType, type ColumnGroupType } from 'antd/es/table';
 import clsx from 'clsx';

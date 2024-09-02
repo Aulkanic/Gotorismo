@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import CustomCard from '../../../../components/card'
 import { GrUserAdmin } from "react-icons/gr";
 import { MdOutlineTravelExplore } from "react-icons/md";
